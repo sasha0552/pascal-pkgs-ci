@@ -1,0 +1,79 @@
+name: Apply patches
+
+inputs:
+  name:
+    required: true
+    type: string
+
+  path:
+    default: .
+    type: string
+
+  version:
+    default: ~
+    type: string
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Apply patches
+      shell: bash
+      run: |
+        set -e
+
+        # Constants
+        readonly CONTENT_PATH="patches/${{ inputs.name }}"
+        readonly VERSION="${{ inputs.version }}"
+
+        # API endpoint template
+        contents() {
+          echo "/repos/${{ github.repository }}/contents/$1?ref=${{ github.sha }}"
+        }
+
+        # Function to apply patch
+        apply() {
+          # Apply patch
+          if [[ "$1" == *.patch ]]; then
+            # Log patch name
+            echo "Applying patch $1..."
+
+            # Apply
+            gh api "$(contents $CONTENT_PATH/$1)" --jq '.content' | base64 -d | patch -p1
+          fi
+
+          # Apply script
+          if [[ "$1" == *.sh ]]; then
+            # Log script name
+            echo "Applying script $1..."
+
+            # Apply
+            gh api "$(contents $CONTENT_PATH/$1)" --jq '.content' | base64 -d | bash
+          fi
+        }
+
+        # Is version-specific patches present?
+        HAS_VERSION_DIR=0
+
+        # Go to directory
+        cd "${{ inputs.path }}"
+
+        # Apply patches
+        for name in $(gh api "$(contents $CONTENT_PATH)" --jq '.[].name'); do
+          # If directory with current version name present, apply patches in directory later
+          if [[ "$name" == "$VERSION" ]]; then
+            HAS_VERSION_DIR=1
+          fi
+
+          # Apply patch
+          apply "$name"
+        done
+
+        # Apply patches for current version
+        if [[ "$HAS_VERSION_DIR" == "1" ]]; then
+          for name in $(gh api "$(contents $CONTENT_PATH/$VERSION)" --jq '.[].name'); do
+            apply "$VERSION/$name"
+          done
+        fi
+      env:
+        GH_TOKEN: ${{ github.token }}

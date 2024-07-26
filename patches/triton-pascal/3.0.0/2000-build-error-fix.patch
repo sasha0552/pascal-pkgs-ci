@@ -1,0 +1,10 @@
+--- a/python/src/ir.cc
++++ b/python/src/ir.cc
+@@ -1614,7 +1614,6 @@ void init_triton_ir(py::module &&m) {
+                           });
+ 
+           ::llvm::DebugFlag = true;
+-          ::llvm::setCurrentDebugTypes(debugTypes.data(), debugTypes.size());
+         }
+ 
+         bool haveTiming = ::triton::tools::getBoolEnv("MLIR_ENABLE_TIMING");

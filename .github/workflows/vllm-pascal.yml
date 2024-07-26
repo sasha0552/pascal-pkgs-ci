@@ -1,0 +1,116 @@
+name: "[P] Build vLLM wheel"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      REF:            ${{ github.event.inputs.src_ref            || 'main'               }}
+      REPOSITORY:     ${{ github.event.inputs.src_repository     || 'vllm-project/vllm'  }}
+      WHEEL_NAME:     ${{ github.event.inputs.tgt_wheel_name     || 'vllm-pascal'        }}
+      WHEEL_VERSION:  ${{ github.event.inputs.tgt_wheel_version                          }}
+
+    steps:
+      - name: Cleanup
+        uses: rokibhasansagar/slimhub_actions@main
+        with:
+          retain: docker_buildkit,docker_imgcache,vcs
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout ${{ env.REPOSITORY }} (${{ env.REF }})
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.REF }}
+          repository: ${{ env.REPOSITORY }}
+          path: ${{ env.WHEEL_NAME }}
+
+      - name: Resolve SOURCE_DATE_EPOCH
+        id: source-date-epoch
+        run: |
+          echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee $GITHUB_OUTPUT
+
+      - name: Apply patches
+        uses: ./.github/actions/apply-patches
+        with:
+          name: ${{ env.WHEEL_NAME }}
+          path: ${{ env.WHEEL_NAME }}
+          version: ${{ env.WHEEL_VERSION }}
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.18.0
+        with:
+          package-dir: ${{ env.WHEEL_NAME }}
+        env:
+          CIBW_BUILD: cp38-manylinux_x86_64
+          CIBW_ENVIRONMENT: >
+            CMAKE_BUILD_TYPE=Release
+          CIBW_MANYLINUX_PYPY_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
+          CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
+          CIBW_REPAIR_WHEEL_COMMAND: ~
+          SOURCE_DATE_EPOCH: ${{ steps.source-date-epoch.outputs.SOURCE_DATE_EPOCH }}
+
+      - name: Repackage wheels
+        uses: ./.github/actions/repackage-wheels
+        with:
+          name: ${{ env.WHEEL_NAME }}
+          version: ${{ env.WHEEL_VERSION }}
+          tags: cp38-abi3-manylinux1_x86_64
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.WHEEL_NAME }}
+          path: wheelhouse/*.whl
+
+  publish:
+    if: ${{ github.event.inputs.publish || '1' }}
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish wheels
+        uses: ./.github/actions/publish-wheels
+        with:
+          name: ${{ env.WHEEL_NAME }}
+
+on:
+  schedule:
+    - cron: "30 1 * * *"
+
+  workflow_dispatch:
+    inputs:
+      src_repository:
+        default: vllm-project/vllm
+        description: Source repository
+        required: true
+        type: string
+
+      src_ref:
+        default: main
+        description: Source ref (e.g. `v1.2.3`)
+        required: true
+        type: string
+
+      tgt_wheel_name:
+        default: vllm-pascal
+        description: Target wheel name
+        required: true
+        type: string
+
+      tgt_wheel_version:
+        description: Target wheel version (e.g. `1.2.3`)
+        type: string
+
+      publish:
+        default: true
+        description: Publish to GitHub Releases
+        required: true
+        type: boolean

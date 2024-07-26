@@ -1,0 +1,39 @@
+--- a/lib/Conversion/TritonGPUToLLVM/TritonGPUToLLVMPass.cpp
++++ b/lib/Conversion/TritonGPUToLLVM/TritonGPUToLLVMPass.cpp
+@@ -859,9 +859,12 @@ private:
+ 
+   static Value promoteOperand(OpBuilder &builder, Location loc, Value operand,
+                               Type promotedType) {
+-    Type tensorPromotedType =
+-        operand.getType().cast<RankedTensorType>().cloneWith(std::nullopt,
+-                                                             promotedType);
++    RankedTensorType tensor = operand.getType().cast<RankedTensorType>();
++    Type tensorElementType = tensor.getElementType();
++    Type tensorPromotedType = tensor.cloneWith(std::nullopt, promotedType);
++    if (tensorElementType.isF16() && promotedType.isF32()) {
++      return builder.create<arith::ExtFOp>(loc, tensorPromotedType, operand);
++    }
+     return builder.create<triton::FpToFpOp>(loc, tensorPromotedType, operand);
+   }
+ 
+--- a/lib/Target/PTX/PTXTranslation.cpp
++++ b/lib/Target/PTX/PTXTranslation.cpp
+@@ -49,7 +49,7 @@ std::string translateLLVMIRToPTX(llvm::Module &module, int cc, int version,
+   // LLVM version in use may not officially support target hardware.
+   // Supported versions for LLVM 14 are here:
+   // https://github.com/llvm/llvm-project/blob/f28c006a5895fc0e329fe15fead81e37457cb1d1/clang/include/clang/Basic/BuiltinsNVPTX.def
+-  int maxPTX = std::min(82, version);
++  int maxPTX = std::min(80, version);
+   int maxCC = std::min(90, cc);
+   // options
+   auto options = llvm::cl::getRegisteredOptions();
+@@ -65,8 +65,7 @@ std::string translateLLVMIRToPTX(llvm::Module &module, int cc, int version,
+   std::string triple = "nvptx64-nvidia-cuda";
+   std::string proc = "sm_" + std::to_string(maxCC);
+   std::string layout = "";
+-  std::string features = "";
+-  // std::string features = "+ptx" + std::to_string(maxPTX);
++  std::string features = "+ptx" + std::to_string(maxPTX);
+   for (llvm::Function &f : module.functions()) {
+     if (!f.hasFnAttribute(llvm::Attribute::NoInline))
+       f.addFnAttr(llvm::Attribute::AlwaysInline);

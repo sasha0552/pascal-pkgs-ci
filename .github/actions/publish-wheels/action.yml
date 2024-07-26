@@ -1,0 +1,34 @@
+name: Publish wheels
+
+inputs:
+  name:
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+
+    - name: Normalize wheel name
+      shell: bash
+      run: echo WHEEL_NAME=${WHEEL_NAME/-/_} >> "$GITHUB_ENV"
+      env:
+        WHEEL_NAME: "${{ inputs.name }}"
+
+    - name: Remove previous wheels
+      uses: mknejp/delete-release-assets@v1
+      with:
+        assets: "{{ env.WHEEL_NAME }}*.whl"
+        fail-if-no-assets: false
+        fail-if-no-release: false
+        tag: repo
+        token: ${{ github.token }}
+  
+    - name: Upload wheels
+      uses: softprops/action-gh-release@v2
+      with:
+        files: "**/*.whl"
+        tag_name: repo

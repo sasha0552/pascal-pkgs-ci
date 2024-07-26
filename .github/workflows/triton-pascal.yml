@@ -1,0 +1,116 @@
+name: "[P] Build Triton wheel"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      REF:            ${{ github.event.inputs.src_ref            || 'release/3.0.x'      }}
+      REPOSITORY:     ${{ github.event.inputs.src_repository     || 'triton-lang/triton' }}
+      WHEEL_NAME:     ${{ github.event.inputs.tgt_wheel_name     || 'triton-pascal'      }}
+      WHEEL_VERSION:  ${{ github.event.inputs.tgt_wheel_version  || '3.0.0'              }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout ${{ env.REPOSITORY }} (${{ env.REF }})
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.REF }}
+          repository: ${{ env.REPOSITORY }}
+          path: ${{ env.WHEEL_NAME }}
+
+      - name: Resolve SOURCE_DATE_EPOCH
+        id: source-date-epoch
+        run: |
+          echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee $GITHUB_OUTPUT
+
+      - name: Apply patches
+        uses: ./.github/actions/apply-patches
+        with:
+          name: ${{ env.WHEEL_NAME }}
+          path: ${{ env.WHEEL_NAME }}
+          version: ${{ env.WHEEL_VERSION }}
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.18.0
+        with:
+          package-dir: ${{ env.WHEEL_NAME }}/python
+        env:
+          CIBW_BUILD: cp${{ matrix.python_version }}-manylinux_x86_64
+          CIBW_MANYLINUX_PYPY_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64:latest
+          CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64:latest
+          SOURCE_DATE_EPOCH: ${{ steps.source-date-epoch.outputs.SOURCE_DATE_EPOCH }}
+
+      - name: Repackage wheels
+        uses: ./.github/actions/repackage-wheels
+        with:
+          name: ${{ env.WHEEL_NAME }}
+          version: ${{ env.WHEEL_VERSION }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.WHEEL_NAME }}-${{ matrix.python_version }}
+          path: wheelhouse/*.whl
+
+    strategy:
+      matrix:
+        python_version: ${{ fromJSON(github.event.inputs.tgt_python_version || '["38", "39", "310", "311", "312"]') }}
+
+  publish:
+    if: ${{ github.event.inputs.publish || '1' }}
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish wheels
+        uses: ./.github/actions/publish-wheels
+        with:
+          name: ${{ env.WHEEL_NAME }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      src_repository:
+        default: triton-lang/triton
+        description: Source repository
+        required: true
+        type: string
+
+      src_ref:
+        default: release/3.0.x
+        description: Source ref (e.g. `release/1.2.x`)
+        required: true
+        type: string
+
+      tgt_python_version:
+        default: '["38", "39", "310", "311", "312"]'
+        description: Target python version list
+        required: true
+        type: string
+
+      tgt_wheel_name:
+        default: triton-pascal
+        description: Target wheel name
+        required: true
+        type: string
+
+      tgt_wheel_version:
+        default: 3.0.0
+        description: Target wheel version (e.g. `1.2.3`)
+        required: true
+        type: string
+
+      publish:
+        default: true
+        description: Publish to GitHub Releases
+        required: true
+        type: boolean
