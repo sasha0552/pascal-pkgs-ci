@@ -1,0 +1,81 @@
+name: Build vLLM wheels
+
+inputs:
+  name:
+    default: vllm
+    type: string
+
+  patches_version:
+    default: ~
+    type: string
+
+  ref:
+    default: main
+    type: string
+
+  repository:
+    default: vllm-project/vllm
+    type: string
+
+  version:
+    default: ~
+    type: string
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Normalize wheel name
+      shell: bash
+      run: echo WHEEL_NAME=${WHEEL_NAME/-/_} >> "$GITHUB_ENV"
+      env:
+        WHEEL_NAME: "${{ inputs.name }}"
+
+    - name: Clear cache
+      shell: bash
+      run: rm -fr /opt/hostedtoolcache
+
+    - name: Checkout ${{ inputs.repository }} (${{ inputs.ref }})
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref }}
+        repository: ${{ inputs.repository }}
+        path: ${{ env.WHEEL_NAME }}
+
+    - if: inputs.patches_version != ''
+      name: Apply patches (${{ inputs.patches_version }})
+      uses: ./.github/actions/apply-patches
+      with:
+        name: ${{ env.WHEEL_NAME }}
+        path: ${{ env.WHEEL_NAME }}
+        version: ${{ inputs.patches_version }}
+
+    - name: Resolve SOURCE_DATE_EPOCH
+      shell: bash
+      run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee "$GITHUB_ENV"
+
+    - name: Build wheels
+      uses: pypa/cibuildwheel@v2.18.0
+      with:
+        package-dir: ${{ env.WHEEL_NAME }}
+      env:
+        CIBW_BUILD: cp38-manylinux_x86_64
+        CIBW_ENVIRONMENT: >
+          CMAKE_BUILD_TYPE=Release
+        CIBW_MANYLINUX_PYPY_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
+        CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
+        CIBW_REPAIR_WHEEL_COMMAND: ~
+        SOURCE_DATE_EPOCH: ${{ env.SOURCE_DATE_EPOCH }}
+
+    - name: Repackage wheels
+      uses: ./.github/actions/repackage-wheels
+      with:
+        name: ${{ env.WHEEL_NAME }}
+        version: ${{ inputs.wheel_version }}
+        tags: cp38-abi3-manylinux1_x86_64
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.WHEEL_NAME }}
+        path: wheelhouse/*.whl

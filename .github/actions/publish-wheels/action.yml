@@ -1,0 +1,28 @@
+name: Publish wheels
+
+inputs:
+  prefix:
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+
+    - name: Remove previous wheels
+      uses: mknejp/delete-release-assets@v1
+      with:
+        assets: "${{ inputs.prefix }}*.whl"
+        fail-if-no-assets: false
+        fail-if-no-release: false
+        tag: wheels
+        token: ${{ github.token }}
+  
+    - name: Upload wheels
+      uses: softprops/action-gh-release@v2
+      with:
+        files: "**/${{ inputs.prefix }}*.whl"
+        tag_name: wheels
