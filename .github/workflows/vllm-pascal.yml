@@ -48,7 +48,6 @@ jobs:
             CMAKE_BUILD_TYPE=Release
           CIBW_MANYLINUX_PYPY_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
           CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
-          CIBW_REPAIR_WHEEL_COMMAND: ~
           SOURCE_DATE_EPOCH: ${{ steps.source-date-epoch.outputs.SOURCE_DATE_EPOCH }}
 
       - name: Repackage wheels
