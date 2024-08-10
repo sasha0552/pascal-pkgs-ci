@@ -54,6 +54,35 @@ pip3 install --force-reinstall --no-cache-dir --no-deps --upgrade vllm-pascal
 > [!WARNING]
 In rare cases, this may cause dependency errors; in that case, just reinstall vLLM.
 
+### [aphrodite-engine](https://github.com/PygmalionAI/aphrodite-engine)
+
+To install aphrodite-engine with the patched Triton:
+```sh
+# Use this repository
+export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
+
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install aphrodite-engine
+pip3 install --extra-index-url https://downloads.pygmalion.chat/whl aphrodite-engine
+
+# Remove triton
+pip3 uninstall triton
+
+# Install patched triton
+pip3 install triton-pascal
+
+# Launch aphrodite-engine
+aphrodite --help
+```
+
+> [!NOTE]
+Installation will be simplified in the future.
+
 ### [triton](https://github.com/triton-lang/triton) (for other applications)
 
 #### To install patched Triton:
