@@ -2,13 +2,16 @@
 
 The main repository for building Pascal-compatible versions of ML applications and libraries.
 
+1. vLLM is rebuilt automatically every day at `01:30` UTC.
+2. Triton `2.2.0`, `2.3.0`, `2.3.1` and `3.0.0` are available in this repository.
+
 ## Installation
 
 ### [vllm](https://github.com/vllm-project/vllm)
 
-*Note: this repository holds "nightly" builds of `vLLM`.*
+*Note: this repository holds "nightly" builds of vLLM.*
 
-To install the patched `vLLM`:
+#### To install the patched vLLM:
 ```sh
 # Use this repository
 export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
@@ -32,10 +35,10 @@ pip3 install triton-pascal
 vllm serve --help
 ```
 
-To update a patched `vLLM` between same `vLLM` release versions (e.g. `0.5.0` (commit `000000`) -> `0.5.0` (commit `ffffff`))
+> [!NOTE]
+Installation will be simplified in the future.
 
-> [!WARNING]
-In rare cases, this may cause dependency errors; in that case, just reinstall `vLLM`.
+#### To update a patched vLLM between same vLLM release versions (e.g. `0.5.0` (commit `000000`) -> `0.5.0` (commit `ffffff`)):
 
 ```sh
 # Use this repository
@@ -48,9 +51,12 @@ source venv/bin/activate
 pip3 install --force-reinstall --no-cache-dir --no-deps --upgrade vllm-pascal
 ```
 
-### [triton](https://github.com/triton-lang/triton)
+> [!WARNING]
+In rare cases, this may cause dependency errors; in that case, just reinstall vLLM.
 
-To install patched `triton`:
+### [triton](https://github.com/triton-lang/triton) (for other applications)
+
+#### To install patched Triton:
 
 ```sh
 # Use this repository
@@ -63,7 +69,8 @@ pip3 uninstall triton
 pip3 install triton-pascal
 ```
 
-Note that installation will be simplified in the future.
+> [!NOTE]
+Installation will be simplified in the future.
 
 ---
 
