@@ -23,7 +23,7 @@ source venv/bin/activate
 pip3 install vllm-pascal
 
 # Remove triton
-pip3 remove triton
+pip3 uninstall triton
 
 # Install patched triton
 pip3 install triton-pascal
@@ -33,6 +33,10 @@ vllm serve --help
 ```
 
 To update a patched `vLLM` between same `vLLM` release versions (e.g. `0.5.0` (commit `000000`) -> `0.5.0` (commit `ffffff`))
+
+> [!WARNING]
+In rare cases, this may cause dependency errors; in that case, just reinstall `vLLM`.
+
 ```sh
 # Use this repository
 export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
@@ -41,7 +45,7 @@ export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
 source venv/bin/activate
 
 # Update vLLM
-pip3 install --force-reinstall --no-cache-dir --upgrade vllm-pascal
+pip3 install --force-reinstall --no-cache-dir --no-deps --upgrade vllm-pascal
 ```
 
 ### [triton](https://github.com/triton-lang/triton)
@@ -52,17 +56,11 @@ To install patched `triton`:
 # Use this repository
 export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
 
-# Examine triton version
-pip3 show triton
-Name: triton
-Version: 3.0.0 <--
-...
-
 # Remove triton
-pip3 remove triton
+pip3 uninstall triton
 
-# Install patched triton (specific version)
-pip3 install triton-pascal==3.0.0
+# Install patched triton
+pip3 install triton-pascal
 ```
 
 Note that installation will be simplified in the future.
