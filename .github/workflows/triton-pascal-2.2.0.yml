@@ -43,4 +43,8 @@ jobs:
           prefix: triton_pascal-2.2.0-
 
 on:
+  push:
+    paths:
+      - patches/triton_pascal/2.2.0/**
+
   workflow_dispatch:

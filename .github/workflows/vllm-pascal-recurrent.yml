@@ -31,6 +31,10 @@ jobs:
           prefix: vllm_pascal-
 
 on:
+  push:
+    paths:
+      - patches/vllm_pascal/main/**
+
   schedule:
     - cron: "30 1 * * *"
 
