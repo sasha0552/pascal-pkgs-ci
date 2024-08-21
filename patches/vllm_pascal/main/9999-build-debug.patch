@@ -1,0 +1,15 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -242,6 +242,12 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
+   )
+ 
+   if (NOT machete_generation_result EQUAL 0)
++    execute_process(
++      COMMAND ${CMAKE_COMMAND} -E echo env 
++      PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/csrc/cutlass_extensions/:${CUTLASS_DIR}/python/:$PYTHONPATH 
++        ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/csrc/quantization/machete/generate.py
++    )
++    execute_process(COMMAND ${CMAKE_COMMAND} -E cat "${CMAKE_CURRENT_BINARY_DIR}/machete_generation.log")
+     message(FATAL_ERROR "Machete generation failed."
+                         " Result: \"${machete_generation_result}\"" 
+                         "\nCheck the log for details: "
