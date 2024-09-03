@@ -7,6 +7,41 @@ The main repository for building Pascal-compatible versions of ML applications a
 
 ## Installation
 
+I recommend installing [transient-package](https://pypi.org/project/transient-package) before proceeding. It simplifies the installation of `triton`.
+
+You can install it globally with `pipx`:
+
+```sh
+pipx install transient-package
+```
+
+> [!IMPORTANT]
+> <details>
+> <summary>If you don't want to install transient-package</summary>
+>
+> If you don't want to install `transient-package`, you'll need to replace
+>
+> ```sh
+> transient-package install       \
+>   --interpreter venv/bin/python \
+>   --source triton               \
+>   --target triton-pascal
+> ```
+>
+> with
+>
+> ```sh
+> # Remove triton
+> pip uninstall triton
+>
+> # Install patched triton
+> pip install triton-pascal
+> ```
+>
+> Note that `transient-package` does more than just `pip uninstall triton` and `pip install triton-pascal`.
+> In particular, it tries to install the correct version of `triton`, and creates a bogus `triton` package in case the application checks for the presence of `triton`.
+> </details>
+
 ### [vllm](https://github.com/vllm-project/vllm)
 
 *Note: this repository holds "nightly" builds of vLLM.*
@@ -17,7 +52,7 @@ The main repository for building Pascal-compatible versions of ML applications a
 export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
 
 # Create virtual environment
-python3 -m venv venv
+python -m venv venv
 
 # Activate virtual environment
 source venv/bin/activate
@@ -25,18 +60,15 @@ source venv/bin/activate
 # Install vLLM
 pip3 install vllm-pascal
 
-# Remove triton
-pip3 uninstall triton
-
 # Install patched triton
-pip3 install triton-pascal
+transient-package install       \
+  --interpreter venv/bin/python \
+  --source triton               \
+  --target triton-pascal
 
 # Launch vLLM
 vllm serve --help
 ```
-
-> [!NOTE]
-Installation will be simplified in the future.
 
 #### To update a patched vLLM between same vLLM release versions (e.g. `0.5.0` (commit `000000`) -> `0.5.0` (commit `ffffff`)):
 
@@ -52,7 +84,7 @@ pip3 install --force-reinstall --no-cache-dir --no-deps --upgrade vllm-pascal
 ```
 
 > [!WARNING]
-In rare cases, this may cause dependency errors; in that case, just reinstall vLLM.
+> In rare cases, this may cause dependency errors; in that case, just reinstall vLLM.
 
 ### [aphrodite-engine](https://github.com/PygmalionAI/aphrodite-engine)
 
@@ -70,18 +102,15 @@ source venv/bin/activate
 # Install aphrodite-engine
 pip3 install --extra-index-url https://downloads.pygmalion.chat/whl aphrodite-engine
 
-# Remove triton
-pip3 uninstall triton
-
 # Install patched triton
-pip3 install triton-pascal
+transient-package install       \
+  --interpreter venv/bin/python \
+  --source triton               \
+  --target triton-pascal
 
 # Launch aphrodite-engine
 aphrodite --help
 ```
-
-> [!NOTE]
-Installation will be simplified in the future.
 
 ### [triton](https://github.com/triton-lang/triton) (for other applications)
 
@@ -91,15 +120,12 @@ Installation will be simplified in the future.
 # Use this repository
 export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
 
-# Remove triton
-pip3 uninstall triton
-
 # Install patched triton
-pip3 install triton-pascal
+transient-package install       \
+  --interpreter venv/bin/python \
+  --source triton               \
+  --target triton-pascal
 ```
-
-> [!NOTE]
-Installation will be simplified in the future.
 
 ---
 
