@@ -61,7 +61,7 @@ runs:
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.18.0
       with:
-        package-dir: ${{ env.WHEEL_NAME }}
+        package-dir: ${{ env.WHEEL_NAME }}/python
       env:
         CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
         CIBW_MANYLINUX_PYPY_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64:latest
