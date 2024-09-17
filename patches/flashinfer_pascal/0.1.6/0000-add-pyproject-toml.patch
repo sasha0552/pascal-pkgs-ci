@@ -1,8 +1,9 @@
 --- /dev/null
 +++ b/python/pyproject.toml
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,8 @@
 +[build-system]
 +build-backend = "setuptools.build_meta"
++build-frontend = { name = "pip", args = ["--no-build-isolation"] }
 +
 +requires = [
 +  "setuptools",
