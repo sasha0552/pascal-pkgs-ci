@@ -1,4 +1,4 @@
-name: "[P] Build FlashInfer wheels"
+name: "[P] Build FlashInfer 0.1.6 wheels"
 
 jobs:
   build:
@@ -13,6 +13,7 @@ jobs:
         with:
           name: flashinfer-pascal
           patches_version: 0.1.6
+          python_version: ${{ matrix.python_version }}
           ref: v0.1.6
 
     strategy:
