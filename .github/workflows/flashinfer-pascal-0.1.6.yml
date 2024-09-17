@@ -1,0 +1,44 @@
+name: "[P] Build FlashInfer wheels"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build FlashInfer wheels
+        uses: ./.github/actions/build-flashinfer
+        with:
+          name: flashinfer-pascal
+          patches_version: 0.1.6
+          ref: v0.1.6
+
+    strategy:
+      matrix:
+        python_version:
+          - "311"
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish wheels
+        uses: ./.github/actions/publish-wheels
+        with:
+          prefix: flashinfer_pascal-
+
+on:
+  push:
+    paths:
+      - patches/flashinfer_pascal/0.1.6/**
+
+  workflow_dispatch:
