@@ -39,6 +39,8 @@ jobs:
 on:
   push:
     paths:
+      - .github/actions/build-flashinfer/**
+      - .github/workflows/flashinfer-pascal-0.1.6.yml
       - patches/flashinfer_pascal/0.1.6/**
 
   workflow_dispatch:

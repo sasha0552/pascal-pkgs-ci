@@ -33,6 +33,8 @@ jobs:
 on:
   push:
     paths:
+      - .github/actions/build-vllm/**
+      - .github/workflows/vllm-pascal-recurrent.yml
       - patches/vllm_pascal/main/**
 
   schedule:

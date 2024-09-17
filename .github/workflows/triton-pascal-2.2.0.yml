@@ -45,6 +45,8 @@ jobs:
 on:
   push:
     paths:
+      - .github/actions/build-triton/**
+      - .github/workflows/triton-pascal-2.2.0.yml
       - patches/triton_pascal/2.2.0/**
 
   workflow_dispatch:
