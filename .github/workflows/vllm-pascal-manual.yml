@@ -1,4 +1,4 @@
-name: "[P] Build vLLM wheels (recurrent)"
+name: "[P] Build vLLM wheels (manual)"
 
 jobs:
   build:
@@ -13,6 +13,8 @@ jobs:
         with:
           name: vllm-pascal
           patches_version: main
+          ref: ${{ inputs.ref }}
+          repository: ${{ inputs.repository }}
 
   publish:
     needs: build
@@ -31,13 +33,12 @@ jobs:
           prefix: vllm_pascal-
 
 on:
-  push:
-    paths:
-      - .github/actions/build-vllm/**
-      - .github/workflows/vllm-pascal-recurrent.yml
-      - patches/vllm_pascal/main/**
-
-  schedule:
-    - cron: "30 1 * * *"
-
   workflow_dispatch:
+    inputs:
+      ref:
+        default: main
+        type: string
+
+      repository:
+        default: vllm-project/vllm
+        type: string
