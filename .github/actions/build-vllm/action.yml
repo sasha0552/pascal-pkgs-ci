@@ -24,9 +24,6 @@ inputs:
 runs:
   using: "composite"
 
-  env:
-    SCCACHE_GHA_ENABLED: true
-
   steps:
     - name: Normalize wheel name
       shell: bash
@@ -56,6 +53,10 @@ runs:
     - name: Resolve SOURCE_DATE_EPOCH
       shell: bash
       run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee "$GITHUB_ENV"
+
+    - name: Set SCCACHE_GHA_ENABLED
+      shell: bash
+      run: echo "SCCACHE_GHA_ENABLED=1" | tee "$GITHUB_ENV"
 
     - name: Install sccache
       uses: mozilla-actions/sccache-action@v0.0.5
