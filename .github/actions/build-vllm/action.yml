@@ -71,6 +71,9 @@ runs:
         CIBW_BUILD: cp38-manylinux_x86_64
         CIBW_ENVIRONMENT: >
           CMAKE_BUILD_TYPE=Release
+          CMAKE_C_COMPILER_LAUNCHER=sccache
+          CMAKE_CUDA_COMPILER_LAUNCHER=sccache
+          CMAKE_CXX_COMPILER_LAUNCHER=sccache
           MAX_JOBS=3
         CIBW_ENVIRONMENT_PASS_LINUX: >
           ACTIONS_CACHE_URL
