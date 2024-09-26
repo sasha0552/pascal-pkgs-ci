@@ -66,8 +66,9 @@ runs:
       with:
         package-dir: ${{ env.WHEEL_NAME }}
       env:
-        CIBW_BEFORE_ALL_LINUX: .github/actions/build-vllm/before_all.sh
+        CIBW_BEFORE_ALL_LINUX: cp /host/opt/hostedtoolcache/sccache/*/*/sccache /usr/local/bin && sccache --show-stats
         CIBW_BUILD: cp38-manylinux_x86_64
+        CIBW_BUILD_VERBOSITY: 1
         CIBW_ENVIRONMENT: >
           CMAKE_BUILD_TYPE=Release
           CMAKE_C_COMPILER_LAUNCHER=sccache
