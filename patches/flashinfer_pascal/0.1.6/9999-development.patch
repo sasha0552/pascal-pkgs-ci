@@ -1,0 +1,70 @@
+--- a/include/flashinfer/math.cuh
++++ b/include/flashinfer/math.cuh
+@@ -120,7 +120,11 @@ __forceinline__ __device__ float rsqrt(float x) {
+  */
+ __forceinline__ __device__ float tanh(float x) {
+   float y;
++#if (!defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 750))
+   asm volatile("tanh.approx.f32 %0, %1;" : "=f"(y) : "f"(x));
++#else
++  y = ::tanhf(x);
++#endif
+   return y;
+ }
+ 
+@@ -129,10 +133,14 @@ __forceinline__ __device__ float tanh(float x) {
+  * \param x input
+  */
+ __forceinline__ __device__ half2 tanh(half2 x) {
++#if (!defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 750))
+   uint32_t y_u32;
+   uint32_t x_u32 = half2_as_uint32(x);
+   asm volatile("tanh.approx.f16x2 %0, %1;" : "=r"(y_u32) : "r"(x_u32));
+   return uint32_as_half2(y_u32);
++#else
++  return __halves2half2(math::tanh(__low2half(x)), math::tanh(__high2half(x)));
++#endif
+ }
+ 
+ /*!
+@@ -140,9 +148,13 @@ __forceinline__ __device__ half2 tanh(half2 x) {
+  * \param x input
+  */
+ __forceinline__ __device__ half tanh(half x) {
++#if (!defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 750))
+   ushort y_u16;
+   asm volatile("tanh.approx.f16 %0, %1;" : "=h"(y_u16) : "h"(__half_as_ushort(x)));
+   return __ushort_as_half(y_u16);
++#else
++  return __float2half(math::tanh(__half2float(x)));
++#endif
+ }
+ 
+ }  // namespace math
+--- a/include/flashinfer/vec_dtypes.cuh
++++ b/include/flashinfer/vec_dtypes.cuh
+@@ -31,9 +31,9 @@ namespace flashinfer {
+ 
+ #define FLASHINFER_INLINE inline __attribute__((always_inline)) __device__
+ 
+-#if (__CUDACC_VER_MAJOR__ * 10000 + __CUDACC_VER_MINOR__ * 100 < 120400) && \
++#if (__CUDACC_VER_MAJOR__ * 10000 + __CUDACC_VER_MINOR__ * 100 < 120300) && \
+     (defined(__CUDA_ARCH__) && (__CUDA_ARCH__ < 800))
+-// CUDA version < 12.4 and GPU architecture < 80
++// CUDA version < 12.3 and GPU architecture < 80
+ FLASHINFER_INLINE __nv_bfloat162 make_bfloat162(const __nv_bfloat16 x, const __nv_bfloat16 y) {
+   __nv_bfloat162 t;
+   t.x = x;
+--- a/python/setup.py
++++ b/python/setup.py
+@@ -35,8 +35,8 @@ root = pathlib.Path(__name__).parent
+ # cuda arch check for fp8 at the moment.
+ for cuda_arch_flags in torch_cpp_ext._get_cuda_arch_flags():
+     arch = int(re.search("compute_\d+", cuda_arch_flags).group()[-2:])
+-    if arch < 75:
+-        raise RuntimeError("FlashInfer requires sm75+")
++    if arch < 61:
++        raise RuntimeError("FlashInfer requires sm61+")
+ 
+ enable_bf16 = os.environ.get("FLASHINFER_ENABLE_BF16", "1") == "1"
+ enable_fp8 = os.environ.get("FLASHINFER_ENABLE_FP8", "1") == "1"

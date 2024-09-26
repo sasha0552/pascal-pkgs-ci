@@ -58,15 +58,29 @@ runs:
       shell: bash
       run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee "$GITHUB_ENV"
 
+    - name: Set SCCACHE_GHA_ENABLED
+      shell: bash
+      run: echo "SCCACHE_GHA_ENABLED=1" | tee "$GITHUB_ENV"
+
+    - name: Install sccache
+      uses: mozilla-actions/sccache-action@v0.0.5
+
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.18.0
       with:
         package-dir: ${{ env.WHEEL_NAME }}/python
       env:
+        CIBW_BEFORE_ALL_LINUX: .github/actions/build-vllm/before_all.sh
+        CIBW_BEFORE_TEST_LINUX: sccache --show-stats
         CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
+        CIBW_BUILD_FRONTEND: "pip; args: --no-build-isolation"
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ENVIRONMENT: >
-          TORCH_CUDA_ARCH_LIST=6.0 6.1
+          TORCH_CUDA_ARCH_LIST=6.1
+        CIBW_ENVIRONMENT_PASS_LINUX: >
+          ACTIONS_CACHE_URL
+          ACTIONS_RUNTIME_TOKEN
+          SCCACHE_GHA_ENABLED
         CIBW_MANYLINUX_PYPY_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64:latest
         CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64:latest
 
