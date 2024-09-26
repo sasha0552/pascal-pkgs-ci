@@ -1,5 +1,10 @@
 name: Setup build cache
 
+inputs:
+  key:
+    required: true
+    type: string
+
 runs:
   using: "composite"
 
@@ -7,6 +12,8 @@ runs:
     - name: Setup cache
       uses: actions/cache@v3
       with:
+        key: ${{ inputs.key }}
+
         path: |
           /root/.cache/pip
 

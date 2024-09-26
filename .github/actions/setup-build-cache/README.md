@@ -5,6 +5,8 @@ To use:
 ```yaml
 - name: Setup build cache
   uses: ./.github/actions/setup-build-cache
+  with:
+    key: abc
 
 - name: Build wheels
   uses: pypa/cibuildwheel@...

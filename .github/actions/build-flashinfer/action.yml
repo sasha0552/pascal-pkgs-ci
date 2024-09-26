@@ -58,6 +58,11 @@ runs:
       shell: bash
       run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee "$GITHUB_ENV"
 
+   - name: Setup build cache
+      uses: ./.github/actions/setup-build-cache
+      with:
+        key: build-flashinfer
+
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.18.0
       with:

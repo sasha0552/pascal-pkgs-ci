@@ -56,6 +56,8 @@ runs:
 
     - name: Setup build cache
       uses: ./.github/actions/setup-build-cache
+      with:
+        key: build-vllm
 
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.18.0
