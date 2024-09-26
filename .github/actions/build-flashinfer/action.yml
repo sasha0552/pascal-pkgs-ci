@@ -45,6 +45,7 @@ runs:
         ref: ${{ inputs.ref }}
         repository: ${{ inputs.repository }}
         path: ${{ env.WHEEL_NAME }}
+        submodules: recursive
 
     - if: inputs.patches_version != ''
       name: Apply patches (${{ inputs.patches_version }})
