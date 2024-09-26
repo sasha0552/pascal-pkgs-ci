@@ -9,6 +9,20 @@ runs:
   using: "composite"
 
   steps:
+    - name: Change owner of ~/.cache
+      shell: bash
+      run: sudo chown --recursive root:root ~/.cache
+
+    - name: Setup cache
+      uses: actions/cache@v4
+      with:
+        key: ${{ inputs.key }}
+        save-always: true
+
+        path: |
+          ~/.cache/cibuildwheel
+          ~/.cache/pip
+
     - name: Set sccache environment variables
       shell: bash
       run: |
@@ -17,3 +31,7 @@ runs:
 
     - name: Install sccache
       uses: mozilla-actions/sccache-action@v0.0.5
+
+    - name: Start sscache server
+      shell: bash
+      run: sscache --start-server
