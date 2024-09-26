@@ -9,15 +9,6 @@ runs:
   using: "composite"
 
   steps:
-    - name: Setup cache
-      uses: actions/cache@v4
-      with:
-        key: ${{ inputs.key }}
-        save-always: true
-
-        path: |
-          ~/.cache/pip
-
     - name: Set sccache environment variables
       shell: bash
       run: |

@@ -70,7 +70,7 @@ runs:
         CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /home/runner/.cache:/root/.cache:rw"
         CIBW_ENVIRONMENT: >
           CMAKE_BUILD_TYPE=Release
-          MAX_JOBS=2
+          MAX_JOBS=3
         CIBW_ENVIRONMENT_PASS_LINUX: >
           ACTIONS_CACHE_URL
           ACTIONS_RUNTIME_TOKEN
@@ -83,7 +83,7 @@ runs:
     - if: always()
       name: Debug
       shell: bash
-      run: ls -la / && ls -la /sccache
+      run: ls -la ~/.cache && ls -la ~/.cache/sccache
 
     - name: Repackage wheels
       uses: ./.github/actions/repackage-wheels
