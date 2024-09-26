@@ -3,6 +3,9 @@
 # Capture path of `tempfile` module
 TEMPFILE_PY=$(python3 -c "import tempfile; print(tempfile.__file__)")
 
+# Pass local variables to _get_candidate_names
+sed --in-place "s/_get_candidate_names()$/_get_candidate_names(locals())/g" "$TEMPFILE_PY"
+
 # Implement selection of name sequence based on prefix
 cat << "EOF" >> "$TEMPFILE_PY"
 class _DeterministicNameSequence:
@@ -28,9 +31,6 @@ def _get_candidate_names(locals={}):
 
   return __get_candidate_names()
 EOF
-
-# Pass local variables to _get_candidate_names
-sed --in-place "s/_get_candidate_names()$/_get_candidate_names(locals())/g" "$TEMPFILE_PY"
 
 # Copy sccache from host
 cp /host/opt/hostedtoolcache/sccache/*/*/sccache /usr/bin
