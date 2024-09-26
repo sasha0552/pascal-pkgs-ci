@@ -13,6 +13,7 @@ runs:
       uses: actions/cache@v3
       with:
         key: ${{ inputs.key }}
+        save-always: true
 
         path: |
           /root/.cache/pip
