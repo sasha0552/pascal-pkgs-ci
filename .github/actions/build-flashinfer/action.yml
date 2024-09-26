@@ -60,8 +60,6 @@ runs:
 
    - name: Setup build cache
       uses: ./.github/actions/setup-build-cache
-      with:
-        key: build-flashinfer
 
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.18.0
@@ -71,7 +69,6 @@ runs:
         CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
         CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
         CIBW_BUILD_VERBOSITY: 1
-        CIBW_CONTAINER_ENGINE: "docker; create_args: --net host --volume /home/runner/.cache:/root/.cache:rw"
         CIBW_ENVIRONMENT: >
           TORCH_CUDA_ARCH_LIST=6.1
         CIBW_ENVIRONMENT_PASS_LINUX: >
@@ -79,8 +76,7 @@ runs:
           ACTIONS_RUNTIME_TOKEN
           SCCACHE_DIRECT
           SCCACHE_GHA_ENABLED
-        CIBW_MANYLINUX_PYPY_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64:latest
-        CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64:latest
+        CIBW_TEST_COMMAND_LINUX: .github/actions/setup-build-cache/before_test.sh
 
     - name: Repackage wheels
       uses: ./.github/actions/repackage-wheels

@@ -1,29 +1,10 @@
 name: Setup build cache
 
-inputs:
-  key:
-    required: true
-    type: string
-
 runs:
   using: "composite"
 
   steps:
-    - name: Create cache directory
-      shell: bash
-      run: mkdir -p /home/runner/.cache/pip && sudo chown --recursive root:root /home/runner/.cache/pip
-
-    - name: Setup cache
-      uses: actions/cache@v4
-      with:
-        key: ${{ inputs.key }}
-        save-always: true
-
-        path: |
-          ~/.cache/cibuildwheel
-          ~/.cache/pip
-
-    - name: Set sccache environment variables
+    - name: Set environment variables
       shell: bash
       run: |
         echo "SCCACHE_GHA_ENABLED=1" | tee -a "$GITHUB_ENV"
@@ -31,7 +12,3 @@ runs:
 
     - name: Install sccache
       uses: mozilla-actions/sccache-action@v0.0.5
-
-    - name: Start sccache server
-      shell: bash
-      run: sccache --start-server
