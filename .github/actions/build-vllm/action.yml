@@ -73,7 +73,6 @@ runs:
         CIBW_ENVIRONMENT: >
           CMAKE_BUILD_TYPE=Release
           MAX_JOBS=2
-          VERBOSE=1
         CIBW_ENVIRONMENT_PASS_LINUX: >
           ACTIONS_CACHE_URL
           ACTIONS_RUNTIME_TOKEN
