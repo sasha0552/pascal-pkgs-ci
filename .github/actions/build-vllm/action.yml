@@ -67,7 +67,7 @@ runs:
         CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
         CIBW_BUILD: cp38-manylinux_x86_64
         CIBW_BUILD_VERBOSITY: 1
-        CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /home/runner/.cache:/root/.cache:rw
+        CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /home/runner/.cache:/root/.cache:rw"
         CIBW_ENVIRONMENT: >
           CMAKE_BUILD_TYPE=Release
           MAX_JOBS=2
