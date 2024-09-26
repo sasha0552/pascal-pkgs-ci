@@ -1,0 +1,10 @@
+--- /dev/null
++++ b/python/pyproject.toml
+@@ -0,0 +1,7 @@
++[build-system]
++build-backend = "setuptools.build_meta"
++
++requires = [
++  "setuptools",
++  "torch==2.4.0",
++]

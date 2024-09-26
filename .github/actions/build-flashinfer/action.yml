@@ -73,7 +73,6 @@ runs:
         CIBW_BEFORE_ALL_LINUX: .github/actions/build-flashinfer/before_all.sh
         CIBW_BEFORE_TEST_LINUX: sccache --show-stats
         CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
-        CIBW_BUILD_FRONTEND: "pip; args: --no-build-isolation"
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ENVIRONMENT: >
           TORCH_CUDA_ARCH_LIST=6.1
