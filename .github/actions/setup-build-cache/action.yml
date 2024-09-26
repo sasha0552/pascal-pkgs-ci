@@ -11,7 +11,7 @@ runs:
   steps:
     - name: Create cache directory
       shell: bash
-      run: sudo mkdir -p /home/runner/.cache && sudo chown --recursive root:root /home/runner/.cache
+      run: mkdir -p /home/runner/.cache/pip && sudo chown --recursive root:root /home/runner/.cache/pip
 
     - name: Setup cache
       uses: actions/cache@v4
