@@ -58,22 +58,15 @@ runs:
       shell: bash
       run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee "$GITHUB_ENV"
 
-    - name: Set SCCACHE_GHA_ENABLED
-      shell: bash
-      run: echo "SCCACHE_GHA_ENABLED=1" | tee "$GITHUB_ENV"
-
-    - name: Install sccache
-      uses: mozilla-actions/sccache-action@v0.0.5
-
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.18.0
       with:
         package-dir: ${{ env.WHEEL_NAME }}/python
       env:
-        CIBW_BEFORE_ALL_LINUX: .github/actions/build-flashinfer/before_all.sh
-        CIBW_BEFORE_TEST_LINUX: sccache --show-stats
+        CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
         CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
         CIBW_BUILD_VERBOSITY: 1
+        CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /root/.cache:/root/.cache:rw"
         CIBW_ENVIRONMENT: >
           TORCH_CUDA_ARCH_LIST=6.1
         CIBW_ENVIRONMENT_PASS_LINUX: >
