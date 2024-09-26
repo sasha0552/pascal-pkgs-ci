@@ -22,6 +22,7 @@ runs:
       shell: bash
       run: |
         echo "SCCACHE_GHA_ENABLED=1" | tee "$GITHUB_ENV"
+        echo "SCCACHE_DIR=/sccache" | tee "$GITHUB_ENV"
         echo "SCCACHE_DIRECT=1" | tee "$GITHUB_ENV"
 
     - name: Install sccache
