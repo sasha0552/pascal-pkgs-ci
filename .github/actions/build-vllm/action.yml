@@ -82,7 +82,7 @@ runs:
       uses: ./.github/actions/repackage-wheels
       with:
         name: ${{ env.WHEEL_NAME }}
-        version: ${{ inputs.wheel_version }}
+        version: ${{ inputs.version }}
         tags: cp38-abi3-manylinux1_x86_64
 
     - name: Upload artifact

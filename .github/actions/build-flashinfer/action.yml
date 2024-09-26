@@ -82,7 +82,7 @@ runs:
       uses: ./.github/actions/repackage-wheels
       with:
         name: ${{ env.WHEEL_NAME }}
-        version: ${{ inputs.wheel_version }}
+        version: ${{ inputs.version }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
