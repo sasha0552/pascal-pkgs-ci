@@ -2,11 +2,12 @@
 
 # Debug
 ls -lah /opt
-ls -lah /usr/lib
-ls -lah /usr/lib/python*/tempfile.py
+ls -lah /opt/python
+ls -lah /opt/python/*
+exit 1
 
 # Make tempfile deterministic
-cat << "EOF" >> /usr/lib/python*/tempfile.py
+cat << "EOF" >> /opt/python/*/tempfile.py
 class _RandomNameSequence:
   i = -1
 
