@@ -1,13 +1,7 @@
 #!/bin/sh -e
 
-# Debug
-ls -lah /opt
-ls -lah /opt/python
-ls -lah /opt/python/*
-exit 1
-
 # Make tempfile deterministic
-cat << "EOF" >> /opt/python/*/tempfile.py
+cat << "EOF" >> $(python3 -c "import tempfile; print(tempfile.__file__)")
 class _RandomNameSequence:
   i = -1
 
