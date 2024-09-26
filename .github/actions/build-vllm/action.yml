@@ -68,7 +68,6 @@ runs:
       env:
         CIBW_BEFORE_ALL_LINUX: .github/actions/build-vllm/before_all.sh
         CIBW_BUILD: cp38-manylinux_x86_64
-        CIBW_BUILD_VERBOSITY: 1
         CIBW_ENVIRONMENT: >
           CMAKE_BUILD_TYPE=Release
           CMAKE_C_COMPILER_LAUNCHER=sccache
