@@ -74,6 +74,8 @@ runs:
         CIBW_ENVIRONMENT_PASS_LINUX: >
           ACTIONS_CACHE_URL
           ACTIONS_RUNTIME_TOKEN
+          SCCACHE_DIR
+          SCCACHE_DIRECT
           SCCACHE_GHA_ENABLED
         CIBW_MANYLINUX_PYPY_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
         CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest

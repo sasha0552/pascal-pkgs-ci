@@ -18,9 +18,11 @@ runs:
         path: |
           /root/.cache/pip
 
-    - name: Set SCCACHE_GHA_ENABLED
+    - name: Set sccache environment variables
       shell: bash
-      run: echo "SCCACHE_GHA_ENABLED=1" | tee "$GITHUB_ENV"
+      run: |
+        echo "SCCACHE_GHA_ENABLED=1" | tee "$GITHUB_ENV"
+        echo "SCCACHE_DIRECT=1" | tee "$GITHUB_ENV"
 
     - name: Install sccache
       uses: mozilla-actions/sccache-action@v0.0.5
