@@ -23,8 +23,3 @@ runs:
 
     - name: Install sccache
       uses: mozilla-actions/sccache-action@v0.0.5
-
-    - if: always()
-      name: Debug
-      shell: bash
-      run: ls -la / && ls -la /sccache
