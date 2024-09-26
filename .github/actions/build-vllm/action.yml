@@ -67,7 +67,7 @@ runs:
         CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
         CIBW_BUILD: cp38-manylinux_x86_64
         CIBW_BUILD_VERBOSITY: 1
-        CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /root/.cache:/root/.cache:rw"
+        CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /root/.cache:/root/.cache:rw --volume /sccache:/sccache:rw"
         CIBW_ENVIRONMENT: >
           CMAKE_BUILD_TYPE=Release
           MAX_JOBS=2
@@ -78,6 +78,11 @@ runs:
         CIBW_MANYLINUX_PYPY_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
         CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/sasha0552/manylinux2014_x86_64-cuda:latest
         CIBW_REPAIR_WHEEL_COMMAND: ~
+
+    - if: always()
+      name: Debug
+      shell: bash
+      run: ls -la / && ls -la /sccache
 
     - name: Repackage wheels
       uses: ./.github/actions/repackage-wheels

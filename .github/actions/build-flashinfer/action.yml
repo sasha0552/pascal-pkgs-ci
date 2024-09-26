@@ -71,7 +71,7 @@ runs:
         CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
         CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
         CIBW_BUILD_VERBOSITY: 1
-        CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /root/.cache:/root/.cache:rw"
+        CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /root/.cache:/root/.cache:rw --volume /sccache:/sccache:rw"
         CIBW_ENVIRONMENT: >
           TORCH_CUDA_ARCH_LIST=6.1
         CIBW_ENVIRONMENT_PASS_LINUX: >

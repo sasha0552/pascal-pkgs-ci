@@ -12,5 +12,5 @@ To use:
   uses: pypa/cibuildwheel@...
   env:
     CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
-    CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /root/.cache:/root/.cache:rw"
+    CIBW_CONTAINER_ENGINE: "docker; create_args: --volume /root/.cache:/root/.cache:rw --volume /sccache:/sccache:rw"
 ```
