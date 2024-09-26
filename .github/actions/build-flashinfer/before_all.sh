@@ -6,5 +6,5 @@ cp /host/opt/hostedtoolcache/sccache/*/*/sccache /usr/bin
 # Show cache stats
 sccache --show-stats
 
-# Install pytorch
-python -m pip install torch
+# Install dependencies
+python -m pip install setuptools torch wheel
