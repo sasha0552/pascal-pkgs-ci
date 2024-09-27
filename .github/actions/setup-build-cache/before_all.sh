@@ -3,13 +3,36 @@
 # Copy sccache from host
 cp /host/tmp/sccache /usr/bin
 
-# Create symlinks to sccache
-if [ $# -eq 1 ] && [ "$1" = "--symlinks" ]; then
-  ln -s /usr/bin/sccache /usr/local/bin/clang
-  ln -s /usr/bin/sccache /usr/local/bin/clang++
-  ln -s /usr/bin/sccache /usr/local/bin/gcc
-  ln -s /usr/bin/sccache /usr/local/bin/g++
-  ln -s /usr/bin/sccache /usr/local/bin/nvcc
+# Wrap compilers with sccache
+if [ $# -eq 1 ] && [ "$1" = "--wrap" ]; then
+  wrap() {
+    # Program name
+    local program=$1
+
+    # Path to program
+    local path=$(which $program)
+
+    # If path not found, return
+    if [ -z "$path" ]; then
+      return
+    fi
+
+    # Move proram
+    mv "$path" "$path.orig"
+
+    # Create wrapper
+    echo "#!/bin/sh -e" > "$path"
+    echo "exec sccache $path.orig" >> "$path"
+
+    # Add executable permission
+    chmod +x "$path"
+  }
+
+  wrap clang
+  wrap clang++
+  wrap gcc
+  wrap g++
+  wrap nvcc
 fi
 
 # Capture path of `build.env` module
