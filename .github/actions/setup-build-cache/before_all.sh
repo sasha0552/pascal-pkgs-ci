@@ -1,7 +1,10 @@
 #!/bin/sh -e
 
-# Capture path of `tempfile` module
-TEMPFILE_PY=$(python3 -c "import tempfile; print(tempfile.__file__)")
+# Capture pathes of `tempfile` modules
+TEMPFILE_PY_LIST=$(find /opt/python -type f -name "tempfile.py")
+
+# Iterate over the `tempfile` modules found
+for TEMPFILE_PY in $TEMPFILE_PY_LIST; do
 
 # Pass local variables to _get_candidate_names
 sed --in-place "s/_get_candidate_names()$/_get_candidate_names(locals())/g" "$TEMPFILE_PY"
@@ -31,6 +34,8 @@ def _get_candidate_names(locals={}):
 
   return __get_candidate_names()
 EOF
+
+done
 
 # Copy sccache from host
 cp /host/opt/hostedtoolcache/sccache/*/*/sccache /usr/bin
