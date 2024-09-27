@@ -72,7 +72,6 @@ runs:
         CIBW_BUILD_FRONTEND: build
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ENVIRONMENT: >
-          PATH=/usr/local/bin:$PATH
           TORCH_CUDA_ARCH_LIST=6.1
         CIBW_ENVIRONMENT_PASS_LINUX: >
           ACTIONS_CACHE_URL
