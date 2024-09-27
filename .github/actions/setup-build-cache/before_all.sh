@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 # Copy sccache from host
-cp /host/opt/hostedtoolcache/sccache/*/*/sccache.orig /usr/bin/sccache
+cp /host/tmp/sccache /usr/bin
 
 # Create symlinks to sccache
 if [ $# -eq 1 ] && [ "$1" = "--symlinks" ]; then

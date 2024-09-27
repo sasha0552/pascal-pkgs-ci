@@ -15,7 +15,7 @@ runs:
 
     - name: Backup sccache
       shell: bash
-      run: mv /opt/hostedtoolcache/sccache/*/*/sccache{,.orig}
+      run: cp /opt/hostedtoolcache/sccache/*/*/sccache /tmp/sccache
 
     - name: Install fake sccache
       shell: bash
