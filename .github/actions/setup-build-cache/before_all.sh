@@ -5,34 +5,11 @@ cp /host/tmp/sccache /usr/bin
 
 # Wrap compilers with sccache
 if [ $# -eq 1 ] && [ "$1" = "--wrap" ]; then
-  wrap() {
-    # Program name
-    local program=$1
-
-    # Path to program
-    local path=$(which $program)
-
-    # If path not found, return
-    if [ -z "$path" ]; then
-      return
-    fi
-
-    # Move proram
-    mv "$path" "$path.orig"
-
-    # Create wrapper
-    echo "#!/bin/sh -e" > "$path"
-    echo "exec sccache $path.orig" >> "$path"
-
-    # Add executable permission
-    chmod +x "$path"
-  }
-
-  wrap clang
-  wrap clang++
-  wrap gcc
-  wrap g++
-  wrap nvcc
+  ln /usr/bin/sccache /usr/local/bin/clang
+  ln /usr/bin/sccache /usr/local/bin/clang++
+  ln /usr/bin/sccache /usr/local/bin/gcc
+  ln /usr/bin/sccache /usr/local/bin/g++
+  ln /usr/bin/sccache /usr/local/bin/nvcc
 fi
 
 # Capture path of `build.env` module
