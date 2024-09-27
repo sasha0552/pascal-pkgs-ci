@@ -1,62 +1,22 @@
 #!/bin/sh -e
 
-# Capture pathes of `tempfile` modules
-TEMPFILE_PY_LIST=$(find /opt/python -type f -name "tempfile.py")
-
-# Iterate over the `tempfile` modules found
-for TEMPFILE_PY in $TEMPFILE_PY_LIST; do
-
-# Pass local variables to _get_candidate_names
-sed --in-place "s/_get_candidate_names()$/_get_candidate_names(locals())/g" "$TEMPFILE_PY"
-
-# Implement selection of name sequence based on prefix
-cat << "EOF" >> "$TEMPFILE_PY"
-class _DeterministicNameSequence:
-  i = -1
-
-  def __iter__(self):
-    return self
-
-  def __next__(self):
-    self.i += 1
-    return format(self.i, "08")
-
-__get_candidate_names = _get_candidate_names
-def _get_candidate_names(locals={}):
-  if "pre" in locals:
-    prefix = locals["pre"]
-
-  if "prefix" in locals:
-    prefix = locals["prefix"]
-
-  if prefix == "pip-build-env-":
-    return _DeterministicNameSequence()
-
-  return __get_candidate_names()
-EOF
-
-done
-
 # Copy sccache from host
 cp /host/opt/hostedtoolcache/sccache/*/*/sccache /usr/bin
 
-# Show cache stats
-sccache --show-stats
-
-# Install fake sccache to host
-cat << "EOF" | install /dev/stdin /host/opt/hostedtoolcache/sccache/*/*/sccache
-#!/bin/sh -e
-
-if [ $# -eq 1 ] && [ "$1" = "--show-stats" ]; then
-  exec cat /tmp/sccache_stats.txt
+# Create symlinks to sccache
+if [ $# -eq 1 ] && [ "$1" = "--symlinks" ]; then
+  ln -s /usr/bin/sccache /usr/local/bin/clang
+  ln -s /usr/bin/sccache /usr/local/bin/clang++
+  ln -s /usr/bin/sccache /usr/local/bin/gcc
+  ln -s /usr/bin/sccache /usr/local/bin/g++
+  ln -s /usr/bin/sccache /usr/local/bin/nvcc
 fi
 
-if [ $# -eq 2 ] && [ "$1" = "--show-stats" ] && [ "$2" = "--stats-format=json" ]; then
-  exec cat /tmp/sccache_stats.json
-fi
+# Capture path of `build.env` module
+ENV_PY=$(python3 -c "import build.env; print(build.env.__file__)")
 
-exit 1
-EOF
+# Use static, deterministic directory name
+sed --in-place "s/tempfile.mkdtemp(prefix='build-env-')/os.path.join(tempfile.gettempdir(), 'build-env-00000000'); os.mkdir(path, 0o700)/g" "$ENV_PY"
 
 # Update stats periodically
 nohup sh -c "                                                                 \
@@ -67,5 +27,5 @@ nohup sh -c "                                                                 \
   done                                                                        \
 "                                                                             &
 
-# Discard background jobs
+# Disown background jobs
 disown

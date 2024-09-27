@@ -67,8 +67,9 @@ runs:
       with:
         package-dir: ${{ env.WHEEL_NAME }}/python
       env:
-        CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
+        CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh --symlinks
         CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
+        CIBW_BUILD_FRONTEND: build
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ENVIRONMENT: >
           TORCH_CUDA_ARCH_LIST=6.1

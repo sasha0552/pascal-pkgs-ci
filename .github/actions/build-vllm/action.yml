@@ -64,6 +64,7 @@ runs:
       env:
         CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
         CIBW_BUILD: cp38-manylinux_x86_64
+        CIBW_BUILD_FRONTEND: build
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ENVIRONMENT: >
           CMAKE_BUILD_TYPE=Release
