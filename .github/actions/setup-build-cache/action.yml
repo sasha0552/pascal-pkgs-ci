@@ -13,10 +13,13 @@ runs:
     - name: Install sccache
       uses: mozilla-actions/sccache-action@v0.0.5
 
+    - name: Backup sccache
+      run: mv /opt/hostedtoolcache/sccache/*/*/sccache{,.orig}
+
     - name: Install fake sccache
       shell: bash
       run: |
-        cat << "EOF" | install /dev/stdin /usr/local/bin/sccache
+        cat << "EOF" | install /dev/stdin /opt/hostedtoolcache/sccache/*/*/sccache
         #!/bin/sh -e
 
         if [ $# -eq 1 ] && [ "$1" = "--show-stats" ]; then
@@ -29,7 +32,3 @@ runs:
 
         exit 1
         EOF
-
-    - name: Debug
-      shell: bash
-      run: echo "===== DEBUG =====" && which sccache && echo "===== DEBUG ====="
