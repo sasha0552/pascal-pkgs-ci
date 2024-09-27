@@ -42,3 +42,30 @@ cp /host/opt/hostedtoolcache/sccache/*/*/sccache /usr/bin
 
 # Show cache stats
 sccache --show-stats
+
+# Install fake sccache to host
+cat << "EOF" | install /dev/stdin /host/opt/hostedtoolcache/sccache/*/*/sccache
+#!/bin/sh -e
+
+if [ $# -eq 1 ] && [ "$1" = "--show-stats" ]; then
+  exec cat /tmp/sccache_stats.txt
+fi
+
+if [ $# -eq 2 ] && [ "$1" = "--show-stats" ] && [ "$2" = "--stats-format=json" ]; then
+  exec cat /tmp/sccache_stats.json
+fi
+
+exit 1
+EOF
+
+# Update stats periodically
+nohup sh -c "                                                                 \
+  while true; do                                                              \
+    sccache --show-stats                     > /host/tmp/sccache_stats.txt  ; \
+    sccache --show-stats --stats-format=json > /host/tmp/sccache_stats.json ; \
+    sleep 3                                                                 ; \
+  done                                                                        \
+"                                                                             &
+
+# Discard background jobs
+disown

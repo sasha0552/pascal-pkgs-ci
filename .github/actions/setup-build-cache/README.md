@@ -10,7 +10,6 @@ To use:
   uses: pypa/cibuildwheel@...
   env:
     CIBW_BEFORE_ALL_LINUX: .github/actions/setup-build-cache/before_all.sh
-    CIBW_BEFORE_TEST_LINUX: .github/actions/setup-build-cache/before_test.sh
     CIBW_ENVIRONMENT_PASS_LINUX: >
       ACTIONS_CACHE_URL
       ACTIONS_RUNTIME_TOKEN
