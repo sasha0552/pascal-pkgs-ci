@@ -14,6 +14,7 @@ runs:
       uses: mozilla-actions/sccache-action@v0.0.5
 
     - name: Backup sccache
+      shell: bash
       run: mv /opt/hostedtoolcache/sccache/*/*/sccache{,.orig}
 
     - name: Install fake sccache
