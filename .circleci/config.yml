@@ -31,10 +31,10 @@ commands:
 
 jobs:
   build-flashinfer:
-    resource_class: 2xlarge+
+    resource_class: large
 
-    docker:
-      - image: cimg/base:current
+    machine:
+      image: ubuntu-2204:current
 
     steps:
       - run:
