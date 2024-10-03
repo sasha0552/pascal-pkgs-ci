@@ -1,10 +1,5 @@
 version: 2.1
 
-parameters:
-  flashinfer:
-    type: boolean
-    default: false
-
 commands:
   ghr:
     parameters:
@@ -63,7 +58,9 @@ jobs:
 
 workflows:
   flashinfer:
-    when: << pipeline.parameters.flashinfer >>
-
     jobs:
-      - build-flashinfer
+      - hold:
+          type: approval
+
+          requires:
+            - build-flashinfer
