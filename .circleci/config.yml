@@ -18,19 +18,21 @@ commands:
         type: string
 
     steps:
-      - name: Install ghr
-        command: go get github.com/tcnksm/ghr
+      - run:
+          name: Install ghr
+          command: go get github.com/tcnksm/ghr
 
-      - name: Upload artifacts
-        command: >
-          ghr
-          -t ${GITHUB_TOKEN}
-          -u ${CIRCLE_PROJECT_USERNAME}
-          -r ${CIRCLE_PROJECT_REPONAME}
-          -c ${CIRCLE_SHA1}
-          << parameters.args >>
-          << parameters.tag >>
-          << parameters.path >>
+      - run:
+          name: Upload artifacts
+          command: >
+            ghr
+            -t ${GITHUB_TOKEN}
+            -u ${CIRCLE_PROJECT_USERNAME}
+            -r ${CIRCLE_PROJECT_REPONAME}
+            -c ${CIRCLE_SHA1}
+            << parameters.args >>
+            << parameters.tag >>
+            << parameters.path >>
 
 jobs:
   build-flashinfer:
@@ -40,20 +42,21 @@ jobs:
       - image: cimg/base:current
 
     steps:
-      - name: Clone repository
-        run: git clone --branch pascal-pkgs-ci --recursive --shallow -- https://github.com/sasha0552/flashinfer.git .
+      - run:
+          name: Clone repository
+          command: git clone --branch pascal-pkgs-ci --recursive --shallow -- https://github.com/sasha0552/flashinfer.git .
 
-      - name: Build FlashInfer
-        command: scripts/run-ci-build-wheel.sh
-        environment:
-          FLASHINFER_BUILD_VERSION: 0.1.6
-          FLASHINFER_CI_CUDA_VERSION: 12.1
-          FLASHINFER_CI_PYTHON_VERSION: 3.11
-          FLASHINFER_CI_TORCH_VERSION: 2.4
-          TORCH_CUDA_ARCH_LIST: 6.1
+      - run:
+          name: Build FlashInfer
+          command: scripts/run-ci-build-wheel.sh
+          environment:
+            FLASHINFER_BUILD_VERSION: 0.1.6
+            FLASHINFER_CI_CUDA_VERSION: 12.1
+            FLASHINFER_CI_PYTHON_VERSION: 3.11
+            FLASHINFER_CI_TORCH_VERSION: 2.4
+            TORCH_CUDA_ARCH_LIST: 6.1
 
-      - name: Upload artifacts
-        ghr:
+      - ghr:
           args: -replace
           tag: wheels
           path: dist
