@@ -39,7 +39,7 @@ jobs:
     steps:
       - run:
           name: Clone repository
-          command: git clone --branch pascal-pkgs-ci --recursive --shallow -- https://github.com/sasha0552/flashinfer.git .
+          command: git clone --branch pascal-pkgs-ci --depth 1 --recursive --shallow-submodules --single-branch -- https://github.com/sasha0552/flashinfer.git .
 
       - run:
           name: Build FlashInfer
