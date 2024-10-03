@@ -43,7 +43,7 @@ jobs:
 
       - run:
           name: Build FlashInfer
-          command: scripts/run-ci-build-wheel.sh
+          command: bash scripts/run-ci-build-wheel.sh
           environment:
             FLASHINFER_BUILD_VERSION: 0.1.6
             FLASHINFER_CI_CUDA_VERSION: 12.1
@@ -59,10 +59,9 @@ jobs:
 workflows:
   flashinfer:
     jobs:
-      - build-flashinfer
-
       - hold:
           type: approval
 
+      - build-flashinfer:
           requires:
-            - build-flashinfer
+            - hold
