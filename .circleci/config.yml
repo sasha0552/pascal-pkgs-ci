@@ -59,6 +59,8 @@ jobs:
 workflows:
   flashinfer:
     jobs:
+      - build-flashinfer
+
       - hold:
           type: approval
 
