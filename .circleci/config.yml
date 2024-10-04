@@ -1,67 +1,31 @@
 version: 2.1
+setup: true
 
-commands:
-  ghr:
-    parameters:
-      args:
-        type: string
-
-      tag:
-        type: string
-
-      path:
-        type: string
-
-    steps:
-      - run:
-          name: Install ghr
-          command: go get github.com/tcnksm/ghr
-
-      - run:
-          name: Upload artifacts
-          command: >
-            ghr
-            -t ${GITHUB_TOKEN}
-            -u ${CIRCLE_PROJECT_USERNAME}
-            -r ${CIRCLE_PROJECT_REPONAME}
-            -c ${CIRCLE_SHA1}
-            << parameters.args >>
-            << parameters.tag >>
-            << parameters.path >>
+orbs:
+  continuation: circleci/continuation@1
 
 jobs:
-  build-flashinfer:
-    resource_class: large
+  setup:
+    resource_class: small
 
-    machine:
-      image: ubuntu-2204:current
+    docker:
+      - image: cimg/python:3.12
 
     steps:
-      - run:
-          name: Clone repository
-          command: git clone --branch pascal-pkgs-ci --depth 1 --recursive --shallow-submodules --single-branch -- https://github.com/sasha0552/flashinfer.git .
+      - checkout
 
       - run:
-          name: Build FlashInfer
-          command: bash scripts/run-ci-build-wheel.sh
-          environment:
-            FLASHINFER_BUILD_VERSION: 0.1.6
-            FLASHINFER_CI_CUDA_VERSION: 12.1
-            FLASHINFER_CI_PYTHON_VERSION: 3.11
-            FLASHINFER_CI_TORCH_VERSION: 2.4
-            TORCH_CUDA_ARCH_LIST: 6.1
+          name: Install `jinja2`
+          command: pip install jinja2
 
-      - ghr:
-          args: -replace
-          tag: wheels
-          path: dist
+      - run:
+          name: Generate config
+          command: scripts/circleci_config.py < .circleci/generated_config.yml.j2 > .circleci/generated_config.yml
+
+      - continuation/continue:
+          configuration_path: .circleci/generated_config.yml
 
 workflows:
-  flashinfer:
+  setup-workflow:
     jobs:
-      - hold:
-          type: approval
-
-      - build-flashinfer:
-          requires:
-            - hold
+      - setup

@@ -1,3 +1,4 @@
+/.circleci/generated*.yml
 /flashinfer*/
 /triton*/
 /vllm*/
