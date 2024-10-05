@@ -5,10 +5,10 @@ export SCCACHE_LOG=trace
 export SCCACHE_NO_DAEMON=1
 
 # Start sccache-dist server
-cat << EOF | sudo sccache-dist server --config /dev/stdin
+cat << EOF | sudo sccache-dist server --config /dev/stdin || true
 cache_dir = "/tmp/toolchains"
 public_addr = "$(tailscale ip --4):10501"
-scheduler_url = "http://$SCCACHE_SCHEDULER_HOSTNAME:10600"
+scheduler_url = "$SCCACHE_DIST_SCHEDULER_URL"
 
 [builder]
 build_dir = "/tmp/build"

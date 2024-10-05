@@ -1,21 +1,50 @@
 #!/bin/sh -e
 
-# Constants
-readonly SCCACHE_VERSION=v0.8.2
-readonly SCCACHE_BASE=sccache-$SCCACHE_VERSION-x86_64-unknown-linux-musl
-readonly SCCACHE_URL=https://github.com/mozilla/sccache/releases/download/$SCCACHE_VERSION/$SCCACHE_BASE.tar.gz
+# Update package lists
+sudo apt-get update
 
-# If sccache is not installed
-if [ -z $(which sccache) ]; then
-  # Install sccache
-  curl -fssL "$SCCACHE_URL" | sudo tar -xz -C /usr/local/bin --strip-components=1 "$SCCACHE_BASE/sccache"
+# Install bubblewrap
+sudo apt-get install --yes bubblewrap
+
+# Download sccache
+sudo wget https://github.com/sasha0552/sccache/releases/latest/download/sccache -O /usr/bin/sccache
+sudo wget https://github.com/sasha0552/sccache/releases/latest/download/sccache-dist -O /usr/bin/sccache-dist
+
+# Give executable perm
+sudo chmod +x /usr/bin/sccache
+sudo chmod +x /usr/bin/sccache-dist
+
+# Install teardown script
+cat << EOF | sudo install /dev/stdin /usr/bin/sccache-dist-teardown
+#!/bin/sh -e
+
+# Iterate over sequence
+for i in \$(seq 0 18); do
+  # Kill sccache-dist
+  tailscale ssh "root@ppc-$SCCACHE_RANDOM-server-\$i" killall -SIGTERM sccache-dist || true
+done
+EOF
+
+# Exit if sccache from action does not exists
+if [ ! -f /opt/hostedtoolcache/sccache/*/*/sccache ]; then
+  exit 0
 fi
 
-# Create config directory
-mkdir -p ~/.config/sccache
+# Generate initial stats
+sccache --show-stats                     > /tmp/sccache_stats.txt
+sccache --show-stats --stats-format=json > /tmp/sccache_stats.json
 
-# Save config
-cat << EOF > ~/.config/sccache/config
-[dist]
-scheduler_url = "http://$SCCACHE_SCHEDULER_HOSTNAME:10600"
+# Install fake sccache
+cat << "EOF" | sudo install /dev/stdin /opt/hostedtoolcache/sccache/*/*/sccache
+#!/bin/sh -e
+
+if [ $# -eq 1 ] && [ "$1" = "--show-stats" ]; then
+  exec cat /tmp/sccache_stats.txt
+fi
+
+if [ $# -eq 2 ] && [ "$1" = "--show-stats" ] && [ "$2" = "--stats-format=json" ]; then
+  exec cat /tmp/sccache_stats.json
+fi
+
+exit 1
 EOF
