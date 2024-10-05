@@ -1,0 +1,22 @@
+name: Start `sccache-dist scheduler`
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Execute `tailscale` command
+      shell: bash
+      run: scripts/tailscale.sh up --authkey=${{ env.TS_AUTH_KEY }} --hostname=${{ env.TS_HOSTNAME }} --ssh
+
+    - name: Install `sccache-dist`
+      shell: bash
+      run: scripts/sccache_dist.sh
+
+    - name: Start `sccache-dist scheduler`
+      shell: bash
+      run: scripts/sccache_dist_scheduler.sh
+
+    - if: always()
+      name: Execute `tailscale` command
+      shell: bash
+      run: scripts/tailscale.sh logout
