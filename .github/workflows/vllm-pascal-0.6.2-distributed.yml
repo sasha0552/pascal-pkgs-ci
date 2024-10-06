@@ -19,7 +19,6 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SCCACHE_DIST_SCHEDULER_URL: http://ppc-${{ needs.configure.outputs.random }}-client:10600
-      SCCACHE_GHA_ENABLED: 1
       TS_AUTH_KEY: ${{ secrets.TS_AUTH_KEY }}
       TS_HOSTNAME: ppc-${{ needs.configure.outputs.random }}-client
       TS_RANDOM: ${{ needs.configure.outputs.random }}
