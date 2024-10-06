@@ -1,0 +1,27 @@
+name: sccache client
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Cleanup
+      uses: ./.github/actions/runner-cleanup
+
+    - name: Execute `tailscale` command
+      shell: bash
+      run: scripts/tailscale.sh up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
+
+    - name: Invoke `sccache` action
+      uses: mozilla-actions/sccache-action@v0.0.5
+
+    - name: Install `sccache`
+      shell: bash
+      run: scripts/sccache.sh
+
+    - name: Start `sccache-dist scheduler`
+      shell: bash
+      run: scripts/sccache_dist_scheduler.sh
+
+    - name: Wait for all servers
+      shell: bash
+      run: scripts/sccache_sync.sh

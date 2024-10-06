@@ -1,0 +1,22 @@
+name: sccache server
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Execute `tailscale` command
+      shell: bash
+      run: scripts/tailscale.sh up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
+
+    - name: Install `sccache`
+      shell: bash
+      run: scripts/sccache.sh
+
+    - name: Start `sccache-dist server`
+      shell: bash
+      run: scripts/sccache_dist_server.sh
+
+    - if: always()
+      name: Execute `tailscale` command
+      shell: bash
+      run: scripts/tailscale.sh logout

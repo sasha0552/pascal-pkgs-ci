@@ -14,17 +14,6 @@ sudo wget https://github.com/sasha0552/sccache/releases/latest/download/sccache-
 sudo chmod +x /usr/bin/sccache
 sudo chmod +x /usr/bin/sccache-dist
 
-# Install teardown script
-cat << EOF | sudo install /dev/stdin /usr/bin/sccache-dist-teardown
-#!/bin/sh -e
-
-# Iterate over sequence
-for i in \$(seq 0 18); do
-  # Kill sccache-dist
-  tailscale ssh "root@ppc-$SCCACHE_RANDOM-server-\$i" killall -SIGTERM sccache-dist || true
-done
-EOF
-
 # Exit if sccache from action does not exists
 if [ ! -f /opt/hostedtoolcache/sccache/*/*/sccache ]; then
   exit 0

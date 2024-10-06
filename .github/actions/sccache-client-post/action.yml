@@ -1,0 +1,15 @@
+name: sccache client (post)
+
+runs:
+  using: "composite"
+
+  steps:
+    - if: always()
+      name: Teardown `sccache` servers
+      shell: bash
+      run: scripts/sccache_teardown.sh
+
+    - if: always()
+      name: Execute `tailscale` command
+      shell: bash
+      run: scripts/tailscale.sh logout

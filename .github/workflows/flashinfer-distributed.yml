@@ -19,35 +19,22 @@ jobs:
     env:
       SCCACHE_DIST_SCHEDULER_URL: http://ppc-${{ needs.configure.outputs.random }}-client:10600
       SCCACHE_GHA_ENABLED: 1
-      SCCACHE_RANDOM: ${{ needs.configure.outputs.random }}
       TS_AUTH_KEY: ${{ secrets.TS_AUTH_KEY }}
       TS_HOSTNAME: ppc-${{ needs.configure.outputs.random }}-client
+      TS_RANDOM: ${{ needs.configure.outputs.random }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cleanup
-        uses: ./.github/actions/runner-cleanup
-
-      - name: Execute `tailscale` command
-        run: scripts/tailscale.sh up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
-
-      - name: Invoke `sccache` action
-        uses: mozilla-actions/sccache-action@v0.0.5
-
-      - name: Install `sccache`
-        run: scripts/sccache.sh
-
-      - name: Start `sccache-dist scheduler`
-        run: scripts/sccache_dist_scheduler.sh
+      - name: sccache client
+        uses: ./.github/actions/sccache-client
 
       - name: Wait
-        run: sleep 86400
+        run: sleep 30
 
-      - if: always()
-        name: Execute `tailscale` command
-        run: scripts/tailscale.sh logout
+      - name: sccache client (post)
+        uses: ./.github/actions/sccache-client-post
 
   sccache-server:
     needs: configure
@@ -55,8 +42,6 @@ jobs:
 
     env:
       SCCACHE_DIST_SCHEDULER_URL: http://ppc-${{ needs.configure.outputs.random }}-client:10600
-      SCCACHE_GHA_ENABLED: 1
-      SCCACHE_RANDOM: ${{ needs.configure.outputs.random }}
       TS_AUTH_KEY: ${{ secrets.TS_AUTH_KEY }}
       TS_HOSTNAME: ppc-${{ needs.configure.outputs.random }}-server-${{ matrix.no }}
 
@@ -64,18 +49,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Execute `tailscale` command
-        run: scripts/tailscale.sh up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
-
-      - name: Install `sccache`
-        run: scripts/sccache.sh
-
-      - name: Start `sccache-dist server`
-        run: scripts/sccache_dist_server.sh
-
-      - if: always()
-        name: Execute `tailscale` command
-        run: scripts/tailscale.sh logout
+      - name: sccache server
+        uses: ./.github/actions/sccache-server
 
     strategy:
       fail-fast: false
