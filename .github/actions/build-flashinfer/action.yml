@@ -63,8 +63,10 @@ runs:
         CIBW_BEFORE_ALL_LINUX: .github/actions/sccache-client/before_all.sh --wrap
         CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
         CIBW_BUILD_VERBOSITY: 1
+        CIBW_CONTAINER_ENGINE: "docker; create_args: --network=host"
         CIBW_ENVIRONMENT: >
           MAX_JOBS=80
+          PATH=/usr/local/bin:$PATH
           TORCH_CUDA_ARCH_LIST=6.1
         CIBW_ENVIRONMENT_PASS_LINUX: >
           ACTIONS_CACHE_URL
