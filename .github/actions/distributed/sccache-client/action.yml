@@ -4,6 +4,9 @@ runs:
   using: "composite"
 
   steps:
+    - name: Cleanup runner image
+      uses: ./.github/actions/common/runner-cleanup
+
     - name: Install common dependencies
       shell: bash
       run: scripts/common_dependencies.sh
