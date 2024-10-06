@@ -1,4 +1,4 @@
-name: "[X] Update package index"
+name: "Update package index"
 
 jobs:
   build:

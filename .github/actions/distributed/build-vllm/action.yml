@@ -21,7 +21,7 @@ runs:
         path: ${{ inputs.repository }}/${{ inputs.ref }}
 
     - name: Apply patches
-      uses: ./.github/actions/distributed/apply-patches
+      uses: ./.github/actions/common/apply-patches
       with:
         ref: ${{ inputs.ref }}
         repository: ${{ inputs.repository }}
