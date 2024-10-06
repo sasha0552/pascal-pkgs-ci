@@ -25,10 +25,10 @@
 -        && export SCCACHE_S3_NO_CREDENTIALS=${SCCACHE_S3_NO_CREDENTIALS} \
 +        && curl -L -o /usr/bin/sccache https://github.com/sasha0552/sccache/releases/latest/download/sccache \
 +        && chmod +x /usr/bin/sccache \
-+        && export ACTIONS_CACHE_URL=${ACTIONS_CACHE_URL} \
-+        && export ACTIONS_RUNTIME_TOKEN=${ACTIONS_RUNTIME_TOKEN} \
-+        && export SCCACHE_DIST_SCHEDULER_URL=${SCCACHE_DIST_SCHEDULER_URL} \
-+        && export SCCACHE_GHA_ENABLED=${SCCACHE_GHA_ENABLED} \
++        && if [ "${ACTIONS_CACHE_URL}" != ""]; then export ACTIONS_CACHE_URL=${ACTIONS_CACHE_URL}; fi \
++        && if [ "${ACTIONS_RUNTIME_TOKEN}" != ""]; then export ACTIONS_RUNTIME_TOKEN=${ACTIONS_RUNTIME_TOKEN}; fi \
++        && if [ "${SCCACHE_DIST_SCHEDULER_URL}" != ""]; then export SCCACHE_DIST_SCHEDULER_URL=${SCCACHE_DIST_SCHEDULER_URL}; fi \
++        && if [ "${SCCACHE_GHA_ENABLED}" != ""]; then export SCCACHE_GHA_ENABLED=${SCCACHE_GHA_ENABLED}; fi \
          && export SCCACHE_IDLE_TIMEOUT=0 \
          && export CMAKE_BUILD_TYPE=Release \
 +        && sccache --dist-status \
