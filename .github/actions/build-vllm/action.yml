@@ -40,6 +40,28 @@ runs:
           core.exportVariable("ACTIONS_CACHE_URL", process.env["ACTIONS_CACHE_URL"])
           core.exportVariable("ACTIONS_RUNTIME_TOKEN", process.env["ACTIONS_RUNTIME_TOKEN"])
 
+    - name: Build
+      uses: docker/build-push-action@v6
+      with:
+        context: ${{ inputs.repository }}/${{ inputs.ref }}
+        network: host
+        push: false
+        tags: ghcr.io/${{ github.repository }}/vllm:${{ inputs.ref }}
+        target: build
+
+        build-args: |
+          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
+          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
+          SCCACHE_GHA_ENABLED=1
+          USE_SCCACHE=1
+          torch_cuda_arch_list=6.0 6.1 7.0 7.5 8.0 8.6 8.9 9.0+PTX
+
+        outputs: |
+          type=local,dest=build
+
+    - name: Copy wheel files
+      run: mv build/dist . && rm -r build
+
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
@@ -47,13 +69,11 @@ runs:
         network: host
         push: true
         tags: ghcr.io/${{ github.repository }}/vllm:${{ inputs.ref }}
+        target: vllm-openai
 
         build-args: |
           ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
           ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
-          SCCACHE_DIST_SCHEDULER_URL=${{ env.SCCACHE_DIST_SCHEDULER_URL }}
           SCCACHE_GHA_ENABLED=1
           USE_SCCACHE=1
           torch_cuda_arch_list=6.0 6.1 7.0 7.5 8.0 8.6 8.9 9.0+PTX
-          max_jobs=80
-          nvcc_threads=40
