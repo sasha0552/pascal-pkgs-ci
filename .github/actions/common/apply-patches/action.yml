@@ -18,28 +18,31 @@ runs:
         set -e
 
         # Constants
-        readonly PATCHES_PATH="patches/${{ inputs.repository }}/${{ inputs.ref }}"
+        readonly PATCHES_PATH="$PWD/patches/${{ inputs.repository }}/${{ inputs.ref }}"
+
+        # Go to target directory
+        cd "${{ inputs.repository }}/${{ inputs.ref }}"
 
         # If patches exists
         if [ -d "$PATCHES_PATH" ]; then
           # Apply patches
           for patch in "$PATCHES_PATH"/*; do
             # Apply patch
-            if [[ "$1" == *.patch ]]; then
+            if [[ "$patch" == *.patch ]]; then
               # Log patch name
-              echo "Applying patch $1..."
+              echo "Applying patch $patch..."
 
               # Apply
-              gh api "$(contents $CONTENT_PATH/$1)" --jq '.content' | base64 -d | patch -p1
+              patch --strip=1 < "$patch"
             fi
 
             # Apply script
-            if [[ "$1" == *.sh ]]; then
+            if [[ "$patch" == *.sh ]]; then
               # Log script name
-              echo "Applying script $1..."
+              echo "Applying script $patch..."
 
               # Apply
-              gh api "$(contents $CONTENT_PATH/$1)" --jq '.content' | base64 -d | bash
+              bash "$patch"
             fi
           done
         fi
