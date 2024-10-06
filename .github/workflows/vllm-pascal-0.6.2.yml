@@ -1,7 +1,7 @@
 name: "[X] Build vLLM (v0.6.2)"
 
 jobs:
-  sccache-client:
+  build:
     runs-on: ubuntu-latest
 
     env:
