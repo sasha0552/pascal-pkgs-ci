@@ -8,9 +8,9 @@ runs:
       shell: bash
       run: scripts/tailscale.sh up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
 
-    - name: Install `sccache`
+    - name: Install `sccache-dist`
       shell: bash
-      run: scripts/sccache.sh
+      run: scripts/sccache_dist.sh
 
     - name: Start `sccache-dist server`
       shell: bash

@@ -1,4 +1,4 @@
-name: "[Distributed] Build FlashInfer"
+name: "[Distributed] Build vLLM (v0.6.2)"
 
 jobs:
   configure:
@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SCCACHE_DIST_SCHEDULER_URL: http://ppc-${{ needs.configure.outputs.random }}-client:10600
       SCCACHE_GHA_ENABLED: 1
       TS_AUTH_KEY: ${{ secrets.TS_AUTH_KEY }}
@@ -31,13 +32,8 @@ jobs:
       - name: sccache client
         uses: ./.github/actions/distributed/sccache-client
 
-      - name: Build FlashInfer wheels
-        uses: ./.github/actions/build-flashinfer
-        with:
-          name: flashinfer-pascal
-          python_version: 311
-          ref: pascal-support
-          repository: sasha0552/flashinfer
+      - name: Build vLLM wheels
+        uses: ./.github/actions/distributed/build-vllm
 
       - if: always()
         name: sccache client (post)
@@ -79,7 +75,7 @@ jobs:
       - name: Publish wheels
         uses: ./.github/actions/publish-wheels
         with:
-          prefix: flashinfer_pascal-
+          prefix: vllm_pascal-0.6.2-
 
 on:
   workflow_dispatch:

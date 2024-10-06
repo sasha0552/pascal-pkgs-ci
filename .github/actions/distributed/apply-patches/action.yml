@@ -1,0 +1,45 @@
+name: Apply patches
+
+inputs:
+  ref:
+    type: string
+
+  repository:
+    type: string
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Apply patches
+      shell: bash
+      run: |
+        # Exit on error
+        set -e
+
+        # Constants
+        readonly PATCHES_PATH="patches/${{ inputs.repository }}/${{ inputs.ref }}"
+
+        # If patches exists
+        if [ -d "$PATCHES_PATH" ]; then
+          # Apply patches
+          for patch in "$PATCHES_PATH"/*; do
+            # Apply patch
+            if [[ "$1" == *.patch ]]; then
+              # Log patch name
+              echo "Applying patch $1..."
+
+              # Apply
+              gh api "$(contents $CONTENT_PATH/$1)" --jq '.content' | base64 -d | patch -p1
+            fi
+
+            # Apply script
+            if [[ "$1" == *.sh ]]; then
+              # Log script name
+              echo "Applying script $1..."
+
+              # Apply
+              gh api "$(contents $CONTENT_PATH/$1)" --jq '.content' | base64 -d | bash
+            fi
+          done
+        fi
