@@ -33,6 +33,8 @@ jobs:
 
       - name: Build vLLM wheels
         uses: ./.github/actions/distributed/build-vllm
+        with:
+          ref: v0.6.2
 
       - if: always()
         name: sccache client (post)
