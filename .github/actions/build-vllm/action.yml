@@ -60,6 +60,7 @@ runs:
           type=local,dest=build
 
     - name: Copy wheel files
+      shell: bash
       run: mv build/dist . && rm -r build
 
     - name: Build and push
