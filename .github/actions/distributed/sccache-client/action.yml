@@ -4,17 +4,17 @@ runs:
   using: "composite"
 
   steps:
-    - name: Execute `tailscale` command
+    - name: Install common dependencies
       shell: bash
-      run: scripts/tailscale.sh up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
+      run: scripts/common_dependencies.sh
+
+    - name: Join the Tailscale network
+      shell: bash
+      run: sudo tailscale up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
 
     - name: Configure Docker daemon
       shell: bash
       run: scripts/tailscale_docker.sh
-
-    - name: Install `sccache-dist`
-      shell: bash
-      run: scripts/sccache_dist.sh
 
     - name: Start `sccache-dist scheduler`
       shell: bash

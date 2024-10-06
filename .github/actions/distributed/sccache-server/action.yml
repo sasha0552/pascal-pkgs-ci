@@ -4,19 +4,19 @@ runs:
   using: "composite"
 
   steps:
-    - name: Execute `tailscale` command
+    - name: Install common dependencies
       shell: bash
-      run: scripts/tailscale.sh up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
+      run: scripts/common_dependencies.sh
 
-    - name: Install `sccache-dist`
+    - name: Join the Tailscale network
       shell: bash
-      run: scripts/sccache_dist.sh
+      run: sudo tailscale up --authkey=$TS_AUTH_KEY --hostname=$TS_HOSTNAME --ssh
 
     - name: Start `sccache-dist server`
       shell: bash
       run: scripts/sccache_dist_server.sh
 
     - if: always()
-      name: Execute `tailscale` command
+      name: Log out from Tailscale
       shell: bash
-      run: scripts/tailscale.sh logout
+      run: sudo tailscale logout

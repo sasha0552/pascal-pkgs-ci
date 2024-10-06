@@ -10,6 +10,6 @@ runs:
       run: scripts/sccache_teardown.sh
 
     - if: always()
-      name: Execute `tailscale` command
+      name: Log out from Tailscale
       shell: bash
-      run: scripts/tailscale.sh logout
+      run: sudo tailscale logout
