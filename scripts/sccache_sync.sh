@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
-# Iterate over sequence
-for i in $(seq 0 18); do
+# Iterate over servers
+i=0; while [ $i -lt $TS_SERVERCOUNT ]; do
   # Repeat infinitely
   while true; do
     # Print message
@@ -19,4 +19,7 @@ for i in $(seq 0 18); do
     # Wait three seconds
     sleep 3
   done
+
+  # Increment
+  i=$((i + 1))
 done

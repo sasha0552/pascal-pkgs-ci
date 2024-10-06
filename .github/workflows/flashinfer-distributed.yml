@@ -22,6 +22,7 @@ jobs:
       TS_AUTH_KEY: ${{ secrets.TS_AUTH_KEY }}
       TS_HOSTNAME: ppc-${{ needs.configure.outputs.random }}-client
       TS_RANDOM: ${{ needs.configure.outputs.random }}
+      TS_SERVERCOUNT: 19
 
     steps:
       - name: Checkout
@@ -30,8 +31,13 @@ jobs:
       - name: sccache client
         uses: ./.github/actions/sccache-client
 
-      - name: Wait
-        run: sleep 30
+      - name: Build FlashInfer wheels
+        uses: ./.github/actions/build-flashinfer
+        with:
+          name: flashinfer-pascal
+          python_version: 311
+          ref: pascal-support
+          repository: sasha0552/flashinfer
 
       - name: sccache client (post)
         uses: ./.github/actions/sccache-client-post
@@ -57,6 +63,22 @@ jobs:
 
       matrix:
         no: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+
+  publish:
+    needs: sccache-client
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish wheels
+        uses: ./.github/actions/publish-wheels
+        with:
+          prefix: flashinfer_pascal-
 
 on:
   workflow_dispatch:
