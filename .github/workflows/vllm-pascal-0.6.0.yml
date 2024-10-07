@@ -16,19 +16,6 @@ jobs:
         with:
           ref: v0.6.0
 
-      - name: Repackage wheels
-        uses: ./.github/actions/common/repackage-wheels
-        with:
-          name: vllm_pascal
-          tags: cp38-abi3-linux_x86_64
-          path: dist/*.whl
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vllm_pascal
-          path: dist/*.whl
-
   publish:
     needs: build
     runs-on: ubuntu-latest

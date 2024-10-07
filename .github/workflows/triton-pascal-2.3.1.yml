@@ -17,18 +17,6 @@ jobs:
           python_version: ${{ matrix.python_version }}
           ref: 958fccea74da58e7e0595ab88ae6cd3f6795a173
 
-      - name: Repackage wheels
-        uses: ./.github/actions/common/repackage-wheels
-        with:
-          name: triton_pascal
-          path: dist/*.whl
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: triton_pascal-${{ matrix.python_version }}
-          path: dist/*.whl
-
     strategy:
       matrix:
         python_version:
