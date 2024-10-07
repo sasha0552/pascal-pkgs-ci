@@ -13,6 +13,9 @@ runs:
   using: "composite"
 
   steps:
+    - name: Cleanup runner image
+      uses: ./.github/actions/common/runner-cleanup
+
     - name: Checkout ${{ inputs.repository }} (${{ inputs.ref }})
       uses: actions/checkout@v4
       with:
