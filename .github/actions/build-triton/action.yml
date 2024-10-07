@@ -1,0 +1,44 @@
+name: Build Triton wheels
+
+inputs:
+  python_version:
+    required: true
+    type: string
+
+  ref:
+    default: main
+    type: string
+
+  repository:
+    default: triton-lang/triton
+    type: string
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout ${{ inputs.repository }} (${{ inputs.ref }})
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref }}
+        repository: ${{ inputs.repository }}
+        path: ${{ inputs.repository }}/${{ inputs.ref }}
+
+    - name: Apply patches
+      uses: ./.github/actions/common/apply-patches
+      with:
+        ref: ${{ inputs.ref }}
+        repository: ${{ inputs.repository }}
+
+    - name: Resolve SOURCE_DATE_EPOCH
+      shell: bash
+      run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee "$GITHUB_ENV"
+
+    - name: Build wheels
+      uses: pypa/cibuildwheel@v2.21.2
+      env:
+        CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
+        CIBW_BUILD_VERBOSITY: 1
+      with:
+        package-dir: ${{ inputs.repository }}/${{ inputs.ref }}/python
+        output-dir: dist

@@ -1,0 +1,49 @@
+name: "[X] Build vLLM (v0.6.1.post1)"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build vLLM wheels
+        uses: ./.github/actions/build-vllm
+        with:
+          ref: v0.6.1.post1
+
+      - name: Repackage wheels
+        uses: ./.github/actions/common/repackage-wheels
+        with:
+          name: vllm_pascal
+          tags: cp38-abi3-linux_x86_64
+          path: dist/*.whl
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vllm_pascal
+          path: dist/*.whl
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish wheels
+        uses: ./.github/actions/common/publish-wheels
+        with:
+          prefix: vllm_pascal-0.6.2-
+
+on:
+  workflow_dispatch:

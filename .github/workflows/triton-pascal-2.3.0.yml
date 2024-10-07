@@ -1,0 +1,59 @@
+name: "[X] Build Triton (v2.2.0)"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build vLLM wheels
+        uses: ./.github/actions/build-triton
+        with:
+          python_version: ${{ matrix.python_version }}
+          ref: 3f8d91bb17f6e7bc33dc995ae0860db89d351c7b
+
+      - name: Repackage wheels
+        uses: ./.github/actions/common/repackage-wheels
+        with:
+          name: triton_pascal
+          path: dist/*.whl
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: triton_pascal-${{ matrix.python_version }}
+          path: dist/*.whl
+
+    strategy:
+      matrix:
+        python_version:
+          - "37"
+          - "38"
+          - "39"
+          - "310"
+          - "311"
+          - "312"
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish wheels
+        uses: ./.github/actions/common/publish-wheels
+        with:
+          prefix: triton_pascal-2.3.0-
+
+on:
+  workflow_dispatch:

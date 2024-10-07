@@ -104,10 +104,6 @@ jobs:
         uses: actions/deploy-pages@v4
 
 on:
-  push:
-    paths:
-      - .github/workflows/update-index.yml
-
   schedule:
     - cron: "30 7 * * *"
 
