@@ -1,4 +1,4 @@
-name: "[X] Build Triton (v2.2.0)"
+name: "[X] Build Triton (v2.3.0)"
 
 jobs:
   build:
