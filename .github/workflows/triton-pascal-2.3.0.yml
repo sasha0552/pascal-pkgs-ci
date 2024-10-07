@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build vLLM wheels
+      - name: Build Triton wheels
         uses: ./.github/actions/build-triton
         with:
           python_version: ${{ matrix.python_version }}
