@@ -25,9 +25,9 @@ runs:
   using: "composite"
 
   steps:
-    - name: Upgrade wheel package
+    - name: Install dependencies
       shell: bash
-      run: pip3 install --upgrade wheel
+      run: pip3 install --upgrade packaging wheel
 
     - name: Repackage wheels
       shell: python
