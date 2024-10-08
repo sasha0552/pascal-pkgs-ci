@@ -43,5 +43,9 @@ jobs:
     needs: publish
     uses: ./.github/workflows/zz-update-index.yml
 
+    permissions:
+      id-token: write
+      pages: write
+
 on:
   workflow_dispatch:
