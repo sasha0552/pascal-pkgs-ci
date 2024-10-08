@@ -121,7 +121,14 @@ runs:
           with tempfile.TemporaryDirectory() as directory:
             # Extract the contents of the wheel file into the temporary directory
             with wheel.wheelfile.WheelFile(wheel_path, "r") as wf:
-              wf.extractall(directory)
+              for zinfo in wf.filelist:
+                wf.extract(zinfo, directory)
+
+                # Set permissions to the same values as they were set in the archive
+                # We have to do this manually due to
+                # https://github.com/python/cpython/issues/59999
+                permissions = zinfo.external_attr >> 16 & 0o777
+                directory.joinpath(zinfo.filename).chmod(permissions)
 
             # Remove the original wheel file as it's no longer needed
             os.remove(wheel_path)
