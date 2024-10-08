@@ -1,7 +1,7 @@
 # pascal-pkgs-ci
 
 > [!IMPORTANT]
-> NEW: vLLM docker image
+> **NEW:** vLLM docker image  
 > You can now try out the vLLM docker image for Pascal GPUs.
 
 The main repository for building Pascal-compatible versions of ML applications and libraries.
