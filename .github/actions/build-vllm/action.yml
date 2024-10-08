@@ -72,6 +72,8 @@ runs:
 
     - name: Build
       uses: docker/build-push-action@v6
+      env:
+        DOCKER_BUILD_RECORD_UPLOAD: false
       with:
         cache-from: type=gha
         cache-to: type=gha,mode=max
@@ -111,6 +113,8 @@ runs:
     - if: inputs.docker_token != ''
       name: Build and push
       uses: docker/build-push-action@v6
+      env:
+        DOCKER_BUILD_RECORD_UPLOAD: false
       with:
         cache-from: type=gha
         cache-to: type=gha,mode=max
