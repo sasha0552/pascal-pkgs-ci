@@ -52,8 +52,7 @@ runs:
       env:
         DOCKER_BUILD_RECORD_UPLOAD: false
       with:
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-to: type=local,dest=/var/tmp/buildx-cache,mode=max
         context: ${{ inputs.repository }}/${{ inputs.ref }}
         network: host
         outputs: type=tar,dest=build.tar
@@ -94,8 +93,7 @@ runs:
       env:
         DOCKER_BUILD_RECORD_UPLOAD: false
       with:
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-from: type=local,src=/var/tmp/buildx-cache
         context: ${{ inputs.repository }}/${{ inputs.ref }}
         network: host
         push: true
