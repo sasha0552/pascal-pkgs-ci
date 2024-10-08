@@ -30,10 +30,6 @@ runs:
         ref: ${{ inputs.ref }}
         repository: ${{ inputs.repository }}
 
-    - name: Resolve SOURCE_DATE_EPOCH
-      shell: bash
-      run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" | tee "$GITHUB_ENV"
-
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.21.2
       env:
