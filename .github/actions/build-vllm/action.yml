@@ -1,11 +1,7 @@
 name: Build vLLM wheels
 
 inputs:
-  docker_latest:
-    default: 0
-    type: string
-
-  docker_token:
+  ghcr_token:
     default: ~
     type: string
 
@@ -43,32 +39,13 @@ runs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - if: inputs.docker_token != ''
+    - if: inputs.ghcr_token != ''
       name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
-        password: ${{ inputs.docker_token }}
+        password: ${{ inputs.ghcr_token }}
         registry: ghcr.io
         username: ${{ github.repository_owner }}
-
-    - name: Generate image tags
-      uses: actions/github-script@v7
-      with:
-        script: |
-          // Variable to store image tags
-          const tags = [];
-
-          // Add ref to tags
-          tags.push(`ghcr.io/${context.repo.owner}/vllm:${core.getInput('ref')}`);
-
-          // If this image marked as latest
-          if (core.getInput('docker_latest') === "1") {
-            // Add latest to tags
-            tags.push(`ghcr.io/${context.repo.owner}/vllm:latest`);
-          }
-
-          // Export image tags
-          core.exportVariable('IMAGE_TAGS', tags.join(' '));
 
     - name: Build
       uses: docker/build-push-action@v6
@@ -81,7 +58,7 @@ runs:
         network: host
         outputs: type=tar,dest=build.tar
         push: false
-        tags: ${{ env.IMAGE_TAGS }}
+        tags: ghcr.io/${{ github.repository_owner }}/vllm:${{ inputs.ref }}
         target: build
 
         build-args: |
@@ -111,7 +88,7 @@ runs:
         name: vllm_pascal
         path: dist/*.whl
 
-    - if: inputs.docker_token != ''
+    - if: inputs.ghcr_token != ''
       name: Build and push
       uses: docker/build-push-action@v6
       env:
@@ -122,7 +99,7 @@ runs:
         context: ${{ inputs.repository }}/${{ inputs.ref }}
         network: host
         push: true
-        tags: ${{ env.IMAGE_TAGS }}
+        tags: ghcr.io/${{ github.repository_owner }}/vllm:${{ inputs.ref }}
         target: vllm-openai
 
         build-args: |
