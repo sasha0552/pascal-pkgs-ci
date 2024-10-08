@@ -62,7 +62,7 @@ runs:
           tags.push(`ghcr.io/${context.repo.owner}/vllm:${core.getInput('ref')}`);
 
           // If this image marked as latest
-          if (core.getBooleanInput('ghcr_latest')) {
+          if (core.getBooleanInput('docker_latest')) {
             // Add latest to tags
             tags.push(`ghcr.io/${context.repo.owner}/vllm:latest`);
           }
