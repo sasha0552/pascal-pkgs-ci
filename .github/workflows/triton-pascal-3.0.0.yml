@@ -41,8 +41,7 @@ jobs:
 
   update-index:
     needs: publish
-    runs-on: ubuntu-latest
-    uses: sasha0552/pascal-pkgs-ci/.github/workflows/zz-update-index.yml@main
+    uses: .github/workflows/zz-update-index.yml
 
 on:
   workflow_dispatch:
