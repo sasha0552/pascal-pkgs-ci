@@ -52,6 +52,7 @@ runs:
       env:
         DOCKER_BUILD_RECORD_UPLOAD: false
       with:
+        cache-to: type=local,dest=/var/tmp/buildx-cache,mode=max
         context: ${{ inputs.repository }}/${{ inputs.ref }}
         outputs: type=tar,dest=build.tar
         push: false
@@ -90,6 +91,7 @@ runs:
       env:
         DOCKER_BUILD_RECORD_UPLOAD: false
       with:
+        cache-from: type=local,src=/var/tmp/buildx-cache
         context: ${{ inputs.repository }}/${{ inputs.ref }}
         push: true
         tags: ghcr.io/${{ github.repository_owner }}/vllm:${{ inputs.ref }}
