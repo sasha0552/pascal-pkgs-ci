@@ -40,5 +40,10 @@ jobs:
         with:
           prefix: triton_pascal-2.3.1-
 
+  update-index:
+    needs: publish
+    runs-on: ubuntu-latest
+    uses: ${{ github.repository }}/.github/workflows/zz-update-index.yml@${{ github.ref }}
+
 on:
   workflow_dispatch:

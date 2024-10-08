@@ -28,7 +28,12 @@ jobs:
       - name: Publish wheels
         uses: ./.github/actions/common/publish-wheels
         with:
-          prefix: vllm_pascal-0.6.2-
+          prefix: vllm_pascal-0.6.1.post2-
+
+  update-index:
+    needs: publish
+    runs-on: ubuntu-latest
+    uses: ${{ github.repository }}/.github/workflows/zz-update-index.yml@${{ github.ref }}
 
 on:
   workflow_dispatch:

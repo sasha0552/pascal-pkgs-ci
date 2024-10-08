@@ -14,14 +14,15 @@ runs:
     - name: Apply patches
       shell: bash
       run: |
-        # Exit on error
-        set -e
-
         # Constants
         readonly PATCHES_PATH="$PWD/patches/${{ inputs.repository }}/${{ inputs.ref }}"
 
         # Go to target directory
         cd "${{ inputs.repository }}/${{ inputs.ref }}"
+
+        # Configure git
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config user.name "github-actions[bot]"
 
         # If patches exists
         if [ -d "$PATCHES_PATH" ]; then
@@ -33,7 +34,7 @@ runs:
               echo "Applying patch $patch..."
 
               # Apply
-              patch --strip=1 < "$patch"
+              patch --strip=1 < "$patch" || exit 1
             fi
 
             # Apply script
@@ -42,7 +43,20 @@ runs:
               echo "Applying script $patch..."
 
               # Apply
-              bash "$patch"
+              bash "$patch" || exit 1
             fi
           done
+
+          # Capture tag
+          tag=$(git describe --exact-match --tags)
+          tag_code=$?
+
+          # Commit changes
+          git add .
+          git commit --allow-empty --message "(pascal-pkgs-ci) Apply patches"
+
+          # Restore tag
+          if [ "$tag_code" = "0" ]; then
+            git tag --force --message "(pascal-pkgs-ci) Apply patches" "$tag"
+          fi
         fi

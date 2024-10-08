@@ -2,8 +2,8 @@
 
 The main repository for building Pascal-compatible versions of ML applications and libraries.
 
-1. vLLM is rebuilt automatically every day at `01:30` UTC.
-2. Triton `2.2.0`, `2.3.0`, `2.3.1` and `3.0.0` are available in this repository.
+1. vLLM `0.5.5`, `0.6.0`, `0.6.1`, `0.6.1.post1`, `0.6.1.post`, `0.6.2` are available in this repository.
+2. Triton `2.2.0`, `2.3.0`, `2.3.1`, `3.0.0` are available in this repository.
 
 > [!IMPORTANT]
 > **NEW:** vLLM docker image  
@@ -11,7 +11,7 @@ The main repository for building Pascal-compatible versions of ML applications a
 
 ## Installation (docker)
 
-### vLLM
+### [vllm](https://github.com/vllm-project/vllm)
 
 ```sh
 # Pull the vLLM image
@@ -60,9 +60,6 @@ pipx install transient-package
 
 ### [vllm](https://github.com/vllm-project/vllm)
 
-*Note: this repository holds both "release" and "nightly" builds of vLLM.*
-
-#### To install the patched vLLM:
 ```sh
 # Use this repository
 export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
@@ -74,9 +71,7 @@ python -m venv venv
 source venv/bin/activate
 
 # Install vLLM
-pip3 install vllm-pascal  # nightly build is installed by default
-                          # you can specify, e.g., ==0.6.2 to install
-                          # a specific release
+pip3 install vllm-pascal
 
 # Install patched triton
 transient-package install       \
@@ -88,25 +83,8 @@ transient-package install       \
 vllm serve --help
 ```
 
-#### To update a patched vLLM between same vLLM release versions (e.g. `0.5.0` (commit `000000`) -> `0.5.0` (commit `ffffff`)):
-
-```sh
-# Use this repository
-export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
-
-# Activate virtual environment
-source venv/bin/activate
-
-# Update vLLM
-pip3 install --force-reinstall --no-cache-dir --no-deps --upgrade vllm-pascal
-```
-
-> [!WARNING]
-> In rare cases, this may cause dependency errors; in that case, just reinstall vLLM.
-
 ### [aphrodite-engine](https://github.com/PygmalionAI/aphrodite-engine)
 
-To install aphrodite-engine with the patched Triton:
 ```sh
 # Use this repository
 export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/"
@@ -131,8 +109,6 @@ aphrodite --help
 ```
 
 ### [triton](https://github.com/triton-lang/triton) (for other applications)
-
-#### To install patched Triton:
 
 ```sh
 # Use this repository
