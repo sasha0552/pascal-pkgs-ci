@@ -42,7 +42,7 @@ jobs:
 
   update-index:
     needs: publish
-    uses: .github/workflows/zz-update-index.yml
+    uses: ./.github/workflows/zz-update-index.yml
 
 on:
   workflow_dispatch:
