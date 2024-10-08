@@ -2,8 +2,8 @@ name: Build vLLM wheels
 
 inputs:
   docker_latest:
-    default: false
-    type: boolean
+    default: 0
+    type: string
 
   docker_token:
     default: ~
@@ -62,7 +62,7 @@ runs:
           tags.push(`ghcr.io/${context.repo.owner}/vllm:${core.getInput('ref')}`);
 
           // If this image marked as latest
-          if (core.getBooleanInput('docker_latest')) {
+          if (core.getInput('docker_latest') === "1") {
             // Add latest to tags
             tags.push(`ghcr.io/${context.repo.owner}/vllm:latest`);
           }

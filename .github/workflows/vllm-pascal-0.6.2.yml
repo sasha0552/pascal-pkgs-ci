@@ -11,7 +11,7 @@ jobs:
       - name: Build vLLM wheels
         uses: ./.github/actions/build-vllm
         with:
-          docker_latest: true
+          docker_latest: 1
           docker_token: ${{ secrets.GHCR_TOKEN }}
           ref: v0.6.2
 

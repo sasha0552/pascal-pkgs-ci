@@ -47,9 +47,15 @@ runs:
             fi
           done
 
+          # Do not exit on errors
+          set +e
+
           # Capture tag
           tag=$(git describe --exact-match --tags)
           tag_code=$?
+
+          # Exit on errors
+          set -e
 
           # Commit changes
           git add .
