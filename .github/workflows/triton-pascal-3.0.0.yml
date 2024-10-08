@@ -42,7 +42,7 @@ jobs:
   update-index:
     needs: publish
     runs-on: ubuntu-latest
-    uses: ${{ github.repository }}/.github/workflows/zz-update-index.yml@main
+    uses: ./.github/workflows/zz-update-index.yml@main
 
 on:
   workflow_dispatch:
