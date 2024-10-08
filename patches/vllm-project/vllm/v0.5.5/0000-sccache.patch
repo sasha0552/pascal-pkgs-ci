@@ -1,26 +1,20 @@
 --- a/Dockerfile
 +++ b/Dockerfile
-@@ -85,8 +85,9 @@ ARG buildkite_commit
- ENV BUILDKITE_COMMIT=${buildkite_commit}
- 
- ARG USE_SCCACHE
--ARG SCCACHE_BUCKET_NAME=vllm-build-sccache
--ARG SCCACHE_REGION_NAME=us-west-2
-+ARG ACTIONS_CACHE_URL
-+ARG ACTIONS_RUNTIME_TOKEN
-+ARG SCCACHE_GHA_ENABLED=0
+@@ -89,14 +89,15 @@ ARG SCCACHE_BUCKET_NAME=vllm-build-sccache
+ ARG SCCACHE_REGION_NAME=us-west-2
  # if USE_SCCACHE is set, use sccache to speed up compilation
  RUN --mount=type=cache,target=/root/.cache/pip \
++    --mount=type=secret,id=ACTIONS_CACHE_URL,env=ACTIONS_CACHE_URL \
++    --mount=type=secret,id=ACTIONS_RUNTIME_TOKEN,env=ACTIONS_RUNTIME_TOKEN \
      if [ "$USE_SCCACHE" = "1" ]; then \
-@@ -95,8 +96,9 @@ RUN --mount=type=cache,target=/root/.cache/pip \
+         echo "Installing sccache..." \
+         && curl -L -o sccache.tar.gz https://github.com/mozilla/sccache/releases/download/v0.8.1/sccache-v0.8.1-x86_64-unknown-linux-musl.tar.gz \
          && tar -xzf sccache.tar.gz \
          && sudo mv sccache-v0.8.1-x86_64-unknown-linux-musl/sccache /usr/bin/sccache \
          && rm -rf sccache.tar.gz sccache-v0.8.1-x86_64-unknown-linux-musl \
 -        && export SCCACHE_BUCKET=${SCCACHE_BUCKET_NAME} \
 -        && export SCCACHE_REGION=${SCCACHE_REGION_NAME} \
-+        && export ACTIONS_CACHE_URL=${ACTIONS_CACHE_URL} \
-+        && export ACTIONS_RUNTIME_TOKEN=${ACTIONS_RUNTIME_TOKEN} \
-+        && export SCCACHE_GHA_ENABLED=${SCCACHE_GHA_ENABLED} \
++        && export SCCACHE_GHA_ENABLED=1 \
          && export SCCACHE_IDLE_TIMEOUT=0 \
          && export CMAKE_BUILD_TYPE=Release \
          && sccache --show-stats \

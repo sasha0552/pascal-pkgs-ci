@@ -85,13 +85,14 @@ runs:
         target: build
 
         build-args: |
-          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
-          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
-          SCCACHE_GHA_ENABLED=1
           USE_SCCACHE=1
           torch_cuda_arch_list=6.0 6.1 7.0 7.5 8.0 8.6 8.9 9.0+PTX
           max_jobs=2
           nvcc_threads=2
+
+        secrets: |
+          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
+          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
 
     - name: Copy wheel files
       shell: bash
@@ -125,10 +126,11 @@ runs:
         target: vllm-openai
 
         build-args: |
-          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
-          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
-          SCCACHE_GHA_ENABLED=1
           USE_SCCACHE=1
           torch_cuda_arch_list=6.0 6.1 7.0 7.5 8.0 8.6 8.9 9.0+PTX
           max_jobs=2
           nvcc_threads=2
+
+        secrets: |
+          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
+          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}

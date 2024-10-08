@@ -1,6 +1,6 @@
 --- a/Dockerfile
 +++ b/Dockerfile
-@@ -179,7 +179,10 @@ RUN ldconfig /usr/local/cuda-$(echo $CUDA_VERSION | cut -d. -f1,2)/compat/
+@@ -178,7 +178,10 @@ RUN ldconfig /usr/local/cuda-$(echo $CUDA_VERSION | cut -d. -f1,2)/compat/
  # install vllm wheel first, so that torch etc will be installed
  RUN --mount=type=bind,from=build,src=/workspace/dist,target=/vllm-workspace/dist \
      --mount=type=cache,target=/root/.cache/pip \
