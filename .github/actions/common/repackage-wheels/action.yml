@@ -37,6 +37,7 @@ runs:
         import packaging.tags
         import packaging.utils
         import packaging.version
+        import pathlib
         import shutil
         import tempfile
         import wheel.wheelfile
@@ -128,7 +129,7 @@ runs:
                 # We have to do this manually due to
                 # https://github.com/python/cpython/issues/59999
                 permissions = zinfo.external_attr >> 16 & 0o777
-                directory.joinpath(zinfo.filename).chmod(permissions)
+                pathlib.Path(directory).joinpath(zinfo.filename).chmod(permissions)
 
             # Remove the original wheel file as it's no longer needed
             os.remove(wheel_path)
