@@ -78,7 +78,6 @@ runs:
       uses: ./.github/actions/common/repackage-wheels
       with:
         name: vllm_pascal
-        tags: cp38-abi3-linux_x86_64
         path: dist/*.whl
 
     - name: Upload artifact
