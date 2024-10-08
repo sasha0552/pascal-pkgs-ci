@@ -4,9 +4,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -15,6 +12,7 @@ jobs:
         uses: ./.github/actions/build-vllm
         with:
           ref: v0.6.0
+          ghcr_token: ${{ secrets.GHCR_TOKEN }}
 
   publish:
     needs: build

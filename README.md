@@ -1,11 +1,27 @@
 # pascal-pkgs-ci
 
+> [!IMPORTANT]
+> NEW: vLLM docker image
+> You can now try out the vLLM docker image for Pascal GPUs.
+
 The main repository for building Pascal-compatible versions of ML applications and libraries.
 
 1. vLLM is rebuilt automatically every day at `01:30` UTC.
 2. Triton `2.2.0`, `2.3.0`, `2.3.1` and `3.0.0` are available in this repository.
 
-## Installation
+## Installation (docker)
+
+# vLLM
+
+```sh
+# Pull the vLLM image
+docker pull ghcr.io/sasha0552/vllm:latest
+
+# You can now follow the official vLLM documentation.
+# Replace the official image with this one.
+```
+
+## Installation (manual)
 
 I recommend installing [transient-package](https://pypi.org/project/transient-package) before proceeding. It simplifies the installation of `triton`.
 
@@ -44,7 +60,7 @@ pipx install transient-package
 
 ### [vllm](https://github.com/vllm-project/vllm)
 
-*Note: this repository holds "nightly" builds of vLLM.*
+*Note: this repository holds both "release" and "nightly" builds of vLLM.*
 
 #### To install the patched vLLM:
 ```sh
@@ -58,7 +74,9 @@ python -m venv venv
 source venv/bin/activate
 
 # Install vLLM
-pip3 install vllm-pascal
+pip3 install vllm-pascal  # nightly build is installed by default
+                          # you can specify, e.g., ==0.6.2 to install
+                          # a specific release
 
 # Install patched triton
 transient-package install       \

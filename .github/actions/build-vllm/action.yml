@@ -9,6 +9,10 @@ inputs:
     default: vllm-project/vllm
     type: string
 
+  ghcr_token:
+    required: true
+    type: string
+
 runs:
   using: "composite"
 
@@ -38,17 +42,19 @@ runs:
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
-        password: ${{ env.GITHUB_TOKEN }}
+        password: ${{ inputs.ghcr_token }}
         registry: ghcr.io
-        username: ${{ github.actor }}
+        username: ${{ github.repository_owner }}
 
     - name: Build
       uses: docker/build-push-action@v6
       with:
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
         context: ${{ inputs.repository }}/${{ inputs.ref }}
         network: host
         push: false
-        tags: ghcr.io/${{ github.repository }}/vllm:${{ inputs.ref }}
+        tags: ghcr.io/${{ github.repository_owner }}/vllm:${{ inputs.ref }}
         target: build
 
         build-args: |
@@ -83,10 +89,12 @@ runs:
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
         context: ${{ inputs.repository }}/${{ inputs.ref }}
         network: host
         push: true
-        tags: ghcr.io/${{ github.repository }}/vllm:${{ inputs.ref }}
+        tags: ghcr.io/${{ github.repository_owner }}/vllm:${{ inputs.ref }}
         target: vllm-openai
 
         build-args: |
