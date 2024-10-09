@@ -15,7 +15,7 @@ The main repository for building Pascal-compatible versions of ML applications a
 
 ```sh
 # Pull the vLLM image
-docker pull ghcr.io/sasha0552/vllm:latest
+docker pull ghcr.io/sasha0552/vllm:v0.6.2
 
 # You can now follow the official vLLM documentation.
 # Replace the official image with this one.
