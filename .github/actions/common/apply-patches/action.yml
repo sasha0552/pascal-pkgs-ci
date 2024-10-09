@@ -24,6 +24,9 @@ runs:
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config user.name "github-actions[bot]"
 
+        # Print debug information
+        git status
+
         # If patches exists
         if [ -d "$PATCHES_PATH" ]; then
           # Apply patches
@@ -34,7 +37,7 @@ runs:
               echo "Applying patch $patch..."
 
               # Apply
-              patch --strip=1 < "$patch" || exit 1
+              patch --no-backup-if-mismatch --strip=1 < "$patch" || exit 1
             fi
 
             # Apply script
@@ -66,3 +69,6 @@ runs:
             git tag --force --message "(pascal-pkgs-ci) Apply patches" "$tag"
           fi
         fi
+
+        # Print debug information
+        git status
