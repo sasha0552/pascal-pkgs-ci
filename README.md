@@ -2,7 +2,7 @@
 
 The main repository for building Pascal-compatible versions of ML applications and libraries.
 
-1. vLLM `0.5.5`, `0.6.0`, `0.6.1`, `0.6.1.post1`, `0.6.1.post`, `0.6.2` are available in this repository.
+1. vLLM `0.5.5`, `0.6.0`, `0.6.1`, `0.6.1.post1`, `0.6.1.post`, `0.6.2`, `0.6.3` and `main` (nightly, updates daily) are available in this repository.
 2. Triton `2.2.0`, `2.3.0`, `2.3.1`, `3.0.0` are available in this repository.
 
 > [!IMPORTANT]
@@ -15,7 +15,8 @@ The main repository for building Pascal-compatible versions of ML applications a
 
 ```sh
 # Pull the vLLM image
-docker pull ghcr.io/sasha0552/vllm:v0.6.2
+docker pull ghcr.io/sasha0552/vllm:v0.6.3  # note that the tag "latest" is not supported.
+                                           # use the tag "main" for the nightly version.
 
 # You can now follow the official vLLM documentation.
 # Replace the official image with this one.
