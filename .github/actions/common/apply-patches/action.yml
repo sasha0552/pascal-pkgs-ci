@@ -20,13 +20,6 @@ runs:
         # Go to target directory
         cd "${{ inputs.repository }}/${{ inputs.ref }}"
 
-        # Configure git
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config user.name "github-actions[bot]"
-
-        # Print debug information
-        git status
-
         # If patches exists
         if [ -d "$PATCHES_PATH" ]; then
           # Apply patches
@@ -49,26 +42,4 @@ runs:
               bash "$patch" || exit 1
             fi
           done
-
-          # Do not exit on errors
-          set +e
-
-          # Capture tag
-          tag=$(git describe --exact-match --tags)
-          tag_code=$?
-
-          # Exit on errors
-          set -e
-
-          # Commit changes
-          git add .
-          git commit --allow-empty --message "(pascal-pkgs-ci) Apply patches"
-
-          # Restore tag
-          if [ "$tag_code" = "0" ]; then
-            git tag --force --message "(pascal-pkgs-ci) Apply patches" "$tag"
-          fi
         fi
-
-        # Print debug information
-        git status
