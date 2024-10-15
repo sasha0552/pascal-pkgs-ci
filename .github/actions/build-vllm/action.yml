@@ -25,10 +25,12 @@ runs:
 
     - name: Compute vLLM version
       uses: actions/github-script@v7
+      env:
+        ref: ${{ inputs.ref }}
       with:
         script: |
           // ref
-          const ref = core.getInput('ref');
+          const ref = process.env["ref"];
 
           // export version for setuptools_scm
           if (ref.startsWith("v")) {
