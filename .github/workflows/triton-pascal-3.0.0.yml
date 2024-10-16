@@ -41,6 +41,7 @@ jobs:
 
   update-index:
     needs: publish
+    secrets: inherit
     uses: ./.github/workflows/zz-update-index.yml
 
     permissions:
