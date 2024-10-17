@@ -118,6 +118,9 @@ runs:
           # Parse the wheel filename into components
           name, version, build_number, tags = packaging.utils.parse_wheel_filename(os.path.basename(wheel_path))
 
+          # Normalized package name (without hyphens)
+          normalized_name = name.replace("-", "_")
+
           # Create a temporary directory to work with the wheel contents
           with tempfile.TemporaryDirectory() as directory:
             # Extract the contents of the wheel file into the temporary directory
@@ -135,7 +138,7 @@ runs:
             os.remove(wheel_path)
 
             # Define the path to the .dist-info directory
-            dist_info = os.path.join(directory, f"{name}-{version}.dist-info")
+            dist_info = os.path.join(directory, f"{normalized_name}-{version}.dist-info")
 
             # Replace the name in the METADATA file if a new name is provided
             if new_name:
@@ -158,11 +161,11 @@ runs:
 
             # If the name or version was changed, rename the .dist-info directory accordingly
             if new_name or new_version:
-              shutil.move(dist_info, os.path.join(directory, f"{new_name or name}-{new_version or version}.dist-info"))
+              shutil.move(dist_info, os.path.join(directory, f"{new_name or normalized_name}-{new_version or version}.dist-info"))
 
             # Construct a list of the new or existing wheel components
             new_wheel_name = [
-              new_name or name,
+              new_name or normalized_name,
               new_version or version,
               new_build_number or build_number,
               tags_str,
