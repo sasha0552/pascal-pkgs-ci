@@ -78,6 +78,7 @@ runs:
         cache-to: type=local,dest=/var/tmp/buildx-cache,mode=max
         context: ${{ inputs.repository }}/${{ inputs.ref }}
         outputs: type=tar,dest=build.tar
+        provenance: false
         push: false
         tags: ${{ env.DOCKER_TAGS }}
         target: build
@@ -117,6 +118,7 @@ runs:
       with:
         cache-from: type=local,src=/var/tmp/buildx-cache
         context: ${{ inputs.repository }}/${{ inputs.ref }}
+        provenance: false
         push: true
         tags: ${{ env.DOCKER_TAGS }}
         target: vllm-openai

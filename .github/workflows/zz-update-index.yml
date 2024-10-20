@@ -5,8 +5,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - if: false
-        name: Remove untagged images
+      - name: Remove untagged images
         uses: actions/github-script@v7
         env:
           package_name: ${{ matrix.package_name }}
