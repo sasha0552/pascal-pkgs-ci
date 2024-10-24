@@ -15,8 +15,8 @@ The main repository for building Pascal-compatible versions of ML applications a
 
 ```sh
 # Pull the vLLM image
-docker pull ghcr.io/sasha0552/vllm:v0.6.3  # you can omit the version specifier
-                                           # to install nightly version
+docker pull ghcr.io/sasha0552/vllm:v0.6.3.post1  # you can omit the version specifier
+                                                 # to install nightly version
 
 # You can now follow the official vLLM documentation.
 # Replace the official image with this one.
@@ -72,8 +72,8 @@ python -m venv venv
 source venv/bin/activate
 
 # Install vLLM
-pip3 install vllm-pascal==0.6.3  # you can omit the version specifier
-                                 # to install nightly version
+pip3 install vllm-pascal==0.6.3.post1  # you can omit the version specifier
+                                       # to install nightly version
 
 # Install patched triton
 transient-package install       \
