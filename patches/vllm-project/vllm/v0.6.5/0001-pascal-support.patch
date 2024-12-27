@@ -11,15 +11,16 @@
  set(HIP_SUPPORTED_ARCHS "gfx906;gfx908;gfx90a;gfx940;gfx941;gfx942;gfx1030;gfx1100;gfx1101")
 --- a/Dockerfile
 +++ b/Dockerfile
-@@ -171,7 +171,10 @@ RUN ldconfig /usr/local/cuda-$(echo $CUDA_VERSION | cut -d. -f1,2)/compat/
- # install vllm wheel first, so that torch etc will be installed
+@@ -192,7 +192,11 @@ RUN --mount=type=cache,target=/root/.cache/pip \
+ # Install vllm wheel first, so that torch etc will be installed.
  RUN --mount=type=bind,from=build,src=/workspace/dist,target=/vllm-workspace/dist \
      --mount=type=cache,target=/root/.cache/pip \
 -    python3 -m pip install dist/*.whl --verbose
 +    python3 -m pip install dist/*.whl --verbose && \
 +    export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/" && \
 +    python3 -m pip install transient-package && \
-+    transient-package install --source triton --target triton-pascal
++    transient-package install --source triton --target triton-pascal && \
++    sed -i "s/.major < 7/.major < 6/g" /usr/local/lib/python3.12/dist-packages/torch/_inductor/scheduler.py
  
  RUN --mount=type=cache,target=/root/.cache/pip \
-     . /etc/environment && \
+ . /etc/environment && \
