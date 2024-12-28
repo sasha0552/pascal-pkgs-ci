@@ -24,6 +24,24 @@ docker pull ghcr.io/sasha0552/vllm:v0.6.6.post1  # you can omit the version spec
 
 ## Installation (manual)
 
+> [!WARNING]
+> Wheels, as of v0.6.5, is currently in a soft-broken state due to PyTorch.
+> To use them, you need to manually patch PyTorch.
+>
+> <details>
+> <summary>Patching PyTorch</summary>
+>
+> Example command assuming you are using a virtual environment located in the current directory
+>
+> ```sh
+> sed -e "s/.major < 7/.major < 6/g"                                 \
+>     -e "s/.major >= 7/.major >= 6/g"                               \
+>     -i                                                             \
+>     venv/lib/python3.12/site-packages/torch/_inductor/scheduler.py \
+>     venv/lib/python3.12/site-packages/torch/utils/_triton.py
+> ```
+> </details>
+
 I recommend installing [transient-package](https://pypi.org/project/transient-package) before proceeding. It simplifies the installation of `triton`.
 
 You can install it globally with `pipx`:
