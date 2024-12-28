@@ -26,7 +26,7 @@ docker pull ghcr.io/sasha0552/vllm:v0.6.6.post1  # you can omit the version spec
 
 > [!WARNING]
 > Wheels, as of v0.6.5, is currently in a soft-broken state due to PyTorch.
-> To use them, you need to manually patch PyTorch.
+> To use them, you need to manually patch PyTorch after installation of vLLM.
 >
 > <details>
 > <summary>Patching PyTorch</summary>
