@@ -84,6 +84,7 @@ runs:
         target: build
 
         build-args: |
+          CUDA_VERSION=12.1.0
           USE_SCCACHE=1
           torch_cuda_arch_list=6.0 6.1 7.0 7.5 8.0 8.6 8.9 9.0+PTX
           max_jobs=2
@@ -124,6 +125,7 @@ runs:
         target: vllm-openai
 
         build-args: |
+          CUDA_VERSION=12.1.0
           USE_SCCACHE=1
           torch_cuda_arch_list=6.0 6.1 7.0 7.5 8.0 8.6 8.9 9.0+PTX
           max_jobs=2
