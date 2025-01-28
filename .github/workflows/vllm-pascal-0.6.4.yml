@@ -28,7 +28,7 @@ jobs:
       - name: Publish wheels
         uses: ./.github/actions/common/publish-wheels
         with:
-          prefix: vllm_pascal-0.6.4+
+          prefix: vllm_pascal-0.6.4
 
   update-index:
     needs: publish

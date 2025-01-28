@@ -15,12 +15,15 @@ runs:
     - name: Remove previous wheels
       uses: mknejp/delete-release-assets@v1
       with:
-        assets: "${{ inputs.prefix }}*.whl"
         fail-if-no-assets: false
         fail-if-no-release: false
         tag: wheels
         token: ${{ github.token }}
-  
+
+        assets: |
+          ${{ inputs.prefix }}+*.whl
+          ${{ inputs.prefix }}-*.whl 
+ 
     - name: Upload wheels
       uses: softprops/action-gh-release@v2
       with:
