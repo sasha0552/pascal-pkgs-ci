@@ -6,8 +6,10 @@ The main repository for building Pascal-compatible versions of ML applications a
 2. Triton `2.2.0`, `2.3.0`, `2.3.1`, `3.0.0`, `3.1.0` are available in this repository.
 
 > [!IMPORTANT]
-> **NEW:** vLLM docker images  
-> You can now try out the vLLM docker images for Pascal GPUs.
+> **WARNING:** Support for new GPUs has been disabled (`v0.7.0`+/`main`)
+> Due to the increase in vLLM code amount, binary size, and build speed, it is now impractical to build vLLM for all GPU architectures.
+> To use vLLM on a heterogeneous machine/cluster, use the official version of vLLM for non-Pascal GPUs and this version for Pascal GPUs and use tensor or pipeline parallelism to connect instances.
+> Note that this change only affects versions above `v0.7.0` (including `main`).
 
 ## Installation (docker)
 
