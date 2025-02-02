@@ -7,9 +7,11 @@ The main repository for building Pascal-compatible versions of ML applications a
 
 > [!IMPORTANT]
 > **WARNING:** Support for new GPUs has been disabled (`v0.7.0`+/`main`)
-> Due to the increase in vLLM code amount, binary size, and build speed, it is now impractical to build vLLM for all GPU architectures.
-> To use vLLM on a heterogeneous machine/cluster, use the official version of vLLM for non-Pascal GPUs and this version for Pascal GPUs and use tensor or pipeline parallelism to connect instances.
-> Note that this change only affects versions above `v0.7.0` (including `main`).
+> 
+> Due to the increase in vLLM code amount, binary size, and build speed, it is now impractical to build vLLM for all GPU architectures.  
+> To use vLLM on a heterogeneous machine or cluster, use the official version of vLLM for non-Pascal GPUs and this version for Pascal GPUs and use tensor or pipeline parallelism to connect instances.
+> 
+> Note that this change only affects versions above `v0.7.0` (including `main`).  
 
 ## Installation (docker)
 
