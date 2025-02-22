@@ -1,0 +1,43 @@
+name: "[X] Build vLLM (v0.7.3)"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build vLLM wheels
+        uses: ./.github/actions/build-vllm
+        with:
+          ghcr_token: ${{ secrets.GHCR_TOKEN }}
+          ref: v0.7.3
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish wheels
+        uses: ./.github/actions/common/publish-wheels
+        with:
+          prefix: vllm_pascal-0.7.3
+
+  update-index:
+    needs: publish
+    secrets: inherit
+    uses: ./.github/workflows/zz-update-index.yml
+
+    permissions:
+      id-token: write
+      pages: write
+
+on:
+  workflow_dispatch:
