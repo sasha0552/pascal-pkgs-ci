@@ -1,9 +1,12 @@
---- a/csrc/moe/moe_wna16.cu	(revision 966f933ee1cd7c9a41db60de5c7ff98657005251)
-+++ b/csrc/moe/moe_wna16.cu	(date 1743444235245)
-@@ -10,6 +10,31 @@
- 
+--- a/csrc/moe/moe_wna16.cu
++++ b/csrc/moe/moe_wna16.cu
+@@ -10,6 +10,34 @@
+
  #define DIVIDE(x, size) (((x) + (size) - 1) / (size))
- 
+
++// Sources: https://github.com/torch/cutorch/blob/master/lib/THC/THCAtomics.cuh#L96C1-L119C7
++// and https://docs.nvidia.com/cuda/cuda-c-programming-guide/#atomicadd
++// and a number of other similar implementations found online.
 +#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ < 700
 +static inline  __device__ void atomicAdd(half *address, half val) {
 +  unsigned int * address_as_ui =
