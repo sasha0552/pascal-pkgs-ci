@@ -1,0 +1,34 @@
+--- a/csrc/moe/moe_wna16.cu	(revision 966f933ee1cd7c9a41db60de5c7ff98657005251)
++++ b/csrc/moe/moe_wna16.cu	(date 1743444235245)
+@@ -10,6 +10,31 @@
+ 
+ #define DIVIDE(x, size) (((x) + (size) - 1) / (size))
+ 
++#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ < 700
++static inline  __device__ void atomicAdd(half *address, half val) {
++  unsigned int * address_as_ui =
++      (unsigned int *) ((char *)address - ((size_t)address & 2));
++  unsigned int old = *address_as_ui;
++  unsigned int assumed;
++
++  do {
++    assumed = old;
++    #if CUDA_VERSION < 9000
++    half hsum;
++    hsum.x = (size_t)address & 2 ? (old >> 16) : (old & 0xffff);
++    hsum = THCNumerics<half>::add(hsum, val);
++    #else
++    __half_raw hsum;
++    hsum.x = (size_t)address & 2 ? (old >> 16) : (old & 0xffff);
++    half tmpres = THCNumerics<half>::add(hsum, val);
++    hsum = __half_raw(tmpres);
++    #endif
++    old = (size_t)address & 2 ? (old & 0xffff) | (hsum.x << 16) : (old & 0xffff0000) | hsum.x;
++    old = atomicCAS(address_as_ui, assumed, old);
++  } while (assumed != old);
++}
++#endif
++
+ template <typename scalar_t, int bit, int GROUPS>
+ __global__ void moe_wna16_gemm_kernel(
+     const scalar_t* __restrict__ input, scalar_t* __restrict__ output,
