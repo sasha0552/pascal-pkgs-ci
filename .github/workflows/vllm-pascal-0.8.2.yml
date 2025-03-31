@@ -1,4 +1,4 @@
-name: "[X] Build vLLM (v0.8.0)"
+name: "[X] Build vLLM (v0.8.2)"
 
 jobs:
   build:
