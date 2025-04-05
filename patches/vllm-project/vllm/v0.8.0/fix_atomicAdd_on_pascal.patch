@@ -1,0 +1,31 @@
+--- a/csrc/moe/moe_wna16.cu
++++ b/csrc/moe/moe_wna16.cu
+@@ -10,6 +10,28 @@
+
+ #define DIVIDE(x, size) (((x) + (size) - 1) / (size))
+
++// Sources: https://github.com/torch/cutorch/blob/master/lib/THC/THCAtomics.cuh#L96C1-L119C7
++// and https://docs.nvidia.com/cuda/cuda-c-programming-guide/#atomicadd
++// and a number of other similar implementations found online.
++#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ < 700
++static inline  __device__ void atomicAdd(half *address, half val) {
++  unsigned int * address_as_ui =
++      (unsigned int *) ((char *)address - ((size_t)address & 2));
++  unsigned int old = *address_as_ui;
++  unsigned int assumed;
++
++  do {
++    assumed = old;
++    __half_raw hsum;
++    hsum.x = (size_t)address & 2 ? (old >> 16) : (old & 0xffff);
++    half tmpres = __hadd(hsum, val);
++    hsum = __half_raw(tmpres);
++    old = (size_t)address & 2 ? (old & 0xffff) | (hsum.x << 16) : (old & 0xffff0000) | hsum.x;
++    old = atomicCAS(address_as_ui, assumed, old);
++  } while (assumed != old);
++}
++#endif
++
+ template <typename scalar_t, int bit, int GROUPS>
+ __global__ void moe_wna16_gemm_kernel(
+     const scalar_t* __restrict__ input, scalar_t* __restrict__ output,

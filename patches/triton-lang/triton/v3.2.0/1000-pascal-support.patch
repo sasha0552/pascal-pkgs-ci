@@ -1,0 +1,55 @@
+--- a/lib/Dialect/TritonGPU/Transforms/AccelerateMatmul.cpp
++++ b/lib/Dialect/TritonGPU/Transforms/AccelerateMatmul.cpp
+@@ -352,8 +352,12 @@ public:
+
+ static Value promoteOperand(OpBuilder &builder, Location loc, Value operand,
+                             Type promotedType) {
+-  Type tensorPromotedType = cast<RankedTensorType>(operand.getType())
+-                                .cloneWith(std::nullopt, promotedType);
++  RankedTensorType tensor = cast<RankedTensorType>(operand.getType());
++  Type tensorElementType = tensor.getElementType();
++  Type tensorPromotedType = tensor.cloneWith(std::nullopt, promotedType);
++  if (tensorElementType.isF16() && promotedType.isF32()) {
++    return builder.create<arith::ExtFOp>(loc, tensorPromotedType, operand);
++  }
+   return builder.create<FpToFpOp>(loc, tensorPromotedType, operand);
+ }
+
+--- a/python/src/ir.cc
++++ b/python/src/ir.cc
+@@ -1664,7 +1664,6 @@ void init_triton_ir(py::module &&m) {
+
+           ::llvm::DebugFlag = true;
+           using namespace llvm;
+-          setCurrentDebugTypes(debugTypes.data(), debugTypes.size());
+         }
+
+         bool haveTiming = ::triton::tools::getBoolEnv("MLIR_ENABLE_TIMING");
+--- a/python/triton/language/core.py
++++ b/python/triton/language/core.py
+@@ -1630,7 +1630,7 @@ def load(pointer, mask=None, other=None, boundary_check=(), padding_option="", c
+         other = semantic.to_tensor(other, _builder)
+     padding_option = _constexpr_to_value(padding_option)
+     cache_modifier = _constexpr_to_value(cache_modifier)
+-    eviction_policy = _constexpr_to_value(eviction_policy)
++    eviction_policy = _constexpr_to_value("")
+     volatile = _constexpr_to_value(volatile)
+     return semantic.load(pointer, mask, other, boundary_check, padding_option, cache_modifier, eviction_policy,
+                          volatile, _builder)
+--- a/third_party/nvidia/lib/TritonNVIDIAGPUToLLVM/TritonGPUToLLVM.cpp
++++ b/third_party/nvidia/lib/TritonNVIDIAGPUToLLVM/TritonGPUToLLVM.cpp
+@@ -221,8 +221,12 @@ private:
+
+   static Value promoteOperand(OpBuilder &builder, Location loc, Value operand,
+                               Type promotedType) {
+-    Type tensorPromotedType = cast<RankedTensorType>(operand.getType())
+-                                  .cloneWith(std::nullopt, promotedType);
++    RankedTensorType tensor = cast<RankedTensorType>(operand.getType());
++    Type tensorElementType = tensor.getElementType();
++    Type tensorPromotedType = tensor.cloneWith(std::nullopt, promotedType);
++    if (tensorElementType.isF16() && promotedType.isF32()) {
++      return builder.create<arith::ExtFOp>(loc, tensorPromotedType, operand);
++    }
+     return builder.create<triton::FpToFpOp>(loc, tensorPromotedType, operand);
+   }
+ };
