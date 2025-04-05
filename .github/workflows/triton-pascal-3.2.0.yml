@@ -17,11 +17,11 @@ jobs:
     strategy:
       matrix:
         python_version:
-          - "38"
           - "39"
           - "310"
           - "311"
           - "312"
+          - "313"
 
   publish:
     needs: build
