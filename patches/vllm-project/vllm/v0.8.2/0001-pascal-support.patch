@@ -23,8 +23,8 @@
 +    sed -e "s/.major < 7/.major < 6/g" \
 +        -e "s/.major >= 7/.major >= 6/g" \
 +        -i \
-+        /usr/local/lib/python$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")/dist-packages/torch/_inductor/scheduler.py \
-+        /usr/local/lib/python$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")/dist-packages/torch/utils/_triton.py
++        /usr/local/lib/python3.13/dist-packages/torch/_inductor/scheduler.py \
++        /usr/local/lib/python3.13/dist-packages/torch/utils/_triton.py
 
  # If we need to build FlashInfer wheel before its release:
  # $ export FLASHINFER_ENABLE_AOT=1
