@@ -48,10 +48,10 @@ fi
 
 # Determine Dockerfile location
 # {
-  if [ -f $root/$repository/$ref/docker/Dockerfile ]; then
-    dockerfile="docker/Dockerfile"
+  if [ -f "$root/$repository/$ref/docker/Dockerfile" ]; then
+    dockerfile="$root/$repository/$ref/docker/Dockerfile"
   else
-    dockerfile="Dockerfile"
+    dockerfile="$root/$repository/$ref/Dockerfile"
   fi
 # }
 
