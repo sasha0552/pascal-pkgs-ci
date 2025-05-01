@@ -2,7 +2,7 @@
 
 The main repository for building Pascal-compatible versions of ML applications and libraries.
 
-1. vLLM `0.5.5`, `0.6.0`, `0.6.1`, `0.6.1.post1`, `0.6.1.post`, `0.6.2`, `0.6.3`, `0.6.3.post1`, `0.6.4`, `0.6.4.post1`, `0.6.5`, `0.6.6`, `0.6.6.post1`, `0.7.0`, `0.7.1`, `0.7.2`, `0.7.3`, `0.8.0`, `0.8.1`, `0.8.2` and `main` (nightly, updates daily) are available in this repository.
+1. vLLM `0.5.5`, `0.6.0`, `0.6.1`, `0.6.1.post1`, `0.6.1.post`, `0.6.2`, `0.6.3`, `0.6.3.post1`, `0.6.4`, `0.6.4.post1`, `0.6.5`, `0.6.6`, `0.6.6.post1`, `0.7.0`, `0.7.1`, `0.7.2`, `0.7.3`, `0.8.0`, `0.8.1`, `0.8.2`, `0.8.3`, `0.8.4`, `0.8.5` and `main` (nightly, updates daily) are available in this repository.
 2. Triton `2.2.0`, `2.3.0`, `2.3.1`, `3.0.0`, `3.1.0`, `3.2.0` are available in this repository.
 
 > [!IMPORTANT]
@@ -19,7 +19,7 @@ The main repository for building Pascal-compatible versions of ML applications a
 
 ```sh
 # Pull the vLLM image
-docker pull ghcr.io/sasha0552/vllm:v0.8.2  # you can omit the version specifier
+docker pull ghcr.io/sasha0552/vllm:v0.8.5  # you can omit the version specifier
                                            # to install nightly version
 
 # You can now follow the official vLLM documentation.
@@ -94,7 +94,7 @@ python -m venv venv
 source venv/bin/activate
 
 # Install vLLM
-pip3 install vllm-pascal==0.8.2  # you can omit the version specifier
+pip3 install vllm-pascal==0.8.5  # you can omit the version specifier
                                  # to install nightly version
 
 # Install patched triton
