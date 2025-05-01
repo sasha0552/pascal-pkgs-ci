@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Publish wheels
-        uses: ./.github/actions/common/publish-wheels
+        uses: ./.github/actions/publish-wheels
         with:
           prefix: triton_pascal-3.1.0-
 

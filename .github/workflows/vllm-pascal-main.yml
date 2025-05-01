@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Publish wheels
-        uses: ./.github/actions/common/publish-wheels
+        uses: ./.github/actions/publish-wheels
         with:
           prefix: vllm_pascal-999.999.999
 
@@ -40,4 +40,7 @@ jobs:
       pages: write
 
 on:
+  schedule:
+    - cron: "0 0 * * *"
+
   workflow_dispatch:
