@@ -50,6 +50,7 @@ fi
 mkdir -p "$root/tmp"
 docker build \
   --build-arg "CUDA_VERSION=12.1.0" \
+  --build-arg "USE_SCCACHE=0" \
   --build-arg "torch_cuda_arch_list=6.0 6.1" \
   --build-arg "max_jobs=2" \
   --build-arg "nvcc_threads=2" \
