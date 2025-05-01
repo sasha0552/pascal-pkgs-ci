@@ -20,90 +20,9 @@ runs:
     - name: Cleanup runner image
       uses: ./.github/actions/common/runner-cleanup
 
-    - name: Expose cache environment variables
-      uses: ./.github/actions/common/expose-cache-vars
-
-    - name: Compute vLLM version
-      uses: actions/github-script@v7
-      env:
-        ref: ${{ inputs.ref }}
-      with:
-        script: |
-          // ref
-          const ref = process.env["ref"];
-
-          // export version for setuptools_scm
-          if (ref.startsWith("v")) {
-            core.exportVariable('SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM', ref.slice(1));
-          } else if (ref === "main") {
-            core.exportVariable('SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM', '999.999.999');
-          }
-
-          // export version for docker
-          if (ref === "main") {
-            core.exportVariable('DOCKER_TAGS', `ghcr.io/${context.repo.owner}/vllm:latest`);
-          } else {
-            core.exportVariable('DOCKER_TAGS', `ghcr.io/${context.repo.owner}/vllm:${ref}`)
-          }
-
-    - name: Checkout ${{ inputs.repository }} (${{ inputs.ref }})
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.ref }}
-        repository: ${{ inputs.repository }}
-        path: ${{ inputs.repository }}/${{ inputs.ref }}
-
-    - name: Apply patches
-      uses: ./.github/actions/common/apply-patches
-      with:
-        ref: ${{ inputs.ref }}
-        repository: ${{ inputs.repository }}
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - if: inputs.ghcr_token != ''
-      name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        password: ${{ inputs.ghcr_token }}
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-
-    - name: Build
-      uses: docker/build-push-action@v6
-      env:
-        DOCKER_BUILD_RECORD_UPLOAD: false
-      with:
-        cache-to: type=local,dest=/var/tmp/buildx-cache,mode=max
-        context: ${{ inputs.repository }}/${{ inputs.ref }}
-        outputs: type=tar,dest=build.tar
-        provenance: false
-        push: false
-        tags: ${{ env.DOCKER_TAGS }}
-        target: build
-
-        build-args: |
-          CUDA_VERSION=12.1.0
-          USE_SCCACHE=1
-          torch_cuda_arch_list=6.0 6.1
-          max_jobs=2
-          nvcc_threads=2
-
-        secrets: |
-          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
-          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
-          SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM=${{ env.SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM }}
-
-    - name: Copy wheel files
+    - name: Build wheels
       shell: bash
-      run: tar --extract --file=build.tar --strip-components=1 workspace/dist && rm build.tar
-
-    - name: Repackage wheels
-      uses: ./.github/actions/common/repackage-wheels
-      with:
-        name: vllm_pascal
-        path: dist/*.whl
+      run: .ci/build-vllm.sh "$PWD" "${{ inputs.repository }}" "${{ inputs.ref }}" "${{ github.repository_owner }}" "${{ inputs.ghcr_token }}"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -111,27 +30,27 @@ runs:
         name: vllm_pascal
         path: dist/*.whl
 
-    - if: inputs.ghcr_token != ''
-      name: Build and push
-      uses: docker/build-push-action@v6
-      env:
-        DOCKER_BUILD_RECORD_UPLOAD: false
-      with:
-        cache-from: type=local,src=/var/tmp/buildx-cache
-        context: ${{ inputs.repository }}/${{ inputs.ref }}
-        provenance: false
-        push: true
-        tags: ${{ env.DOCKER_TAGS }}
-        target: vllm-openai
-
-        build-args: |
-          CUDA_VERSION=12.1.0
-          USE_SCCACHE=1
-          torch_cuda_arch_list=6.0 6.1
-          max_jobs=2
-          nvcc_threads=2
-
-        secrets: |
-          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
-          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
-          SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM=${{ env.SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM }}
+#    - if: inputs.ghcr_token != ''
+#      name: Build and push
+#      uses: docker/build-push-action@v6
+#      env:
+#        DOCKER_BUILD_RECORD_UPLOAD: false
+#      with:
+#        cache-from: type=local,src=/var/tmp/buildx-cache
+#        context: ${{ inputs.repository }}/${{ inputs.ref }}
+#        provenance: false
+#        push: true
+#        tags: ${{ env.DOCKER_TAGS }}
+#        target: vllm-openai
+#
+#        build-args: |
+#          CUDA_VERSION=12.1.0
+#          USE_SCCACHE=1
+#          torch_cuda_arch_list=6.0 6.1
+#          max_jobs=2
+#          nvcc_threads=2
+#
+#        secrets: |
+#          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
+#          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
+#          SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM=${{ env.SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM }}

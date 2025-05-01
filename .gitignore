@@ -1,4 +1,7 @@
 /.circleci/generated*.yml
+/dist/
 /flashinfer*/
+/tmp/
 /triton*/
+/venv/
 /vllm*/

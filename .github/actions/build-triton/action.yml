@@ -17,36 +17,12 @@ runs:
   using: "composite"
 
   steps:
-    - name: Checkout ${{ inputs.repository }} (${{ inputs.ref }})
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.ref }}
-        repository: ${{ inputs.repository }}
-        path: ${{ inputs.repository }}/${{ inputs.ref }}
-
-    - name: Apply patches
-      uses: ./.github/actions/common/apply-patches
-      with:
-        ref: ${{ inputs.ref }}
-        repository: ${{ inputs.repository }}
-
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.21.2
-      env:
-        CIBW_BUILD: cp${{ inputs.python_version }}-manylinux_x86_64
-        CIBW_BUILD_VERBOSITY: 1
-      with:
-        package-dir: ${{ inputs.repository }}/${{ inputs.ref }}/python
-        output-dir: dist
-
-    - name: Repackage wheels
-      uses: ./.github/actions/common/repackage-wheels
-      with:
-        name: triton_pascal
-        path: dist/*.whl
+      shell: bash
+      run: .ci/build-triton.sh "$PWD" "${{ inputs.repository }}" "${{ inputs.ref }}" "${{ inputs.python_version }}"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: triton_pascal-${{ matrix.python_version }}
+        name: triton_pascal-${{ inputs.python_version }}
         path: dist/*.whl
