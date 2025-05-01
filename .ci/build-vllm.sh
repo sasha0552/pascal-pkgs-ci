@@ -19,12 +19,6 @@ cd "$root"
 # Apply patches
 "$root/.ci/common/apply-patches.sh" "$root" "$repository" "$ref"
 
-# If GHCR token is provided
-if [ -n "$ghcr_token" ]; then
-  # Login to GitHub Container Registry
-  echo "$ghcr_token" | docker login ghcr.io -u "$ghcr_user" --password-stdin
-fi
-
 # Compute vLLM version
 # {
   # setuptools
@@ -78,3 +72,25 @@ rm "$root/tmp/build.tar"
 export WHEEL_HOUSE="dist/*.whl"
 export WHEEL_NAME="vllm_pascal"
 "$root/.ci/common/repackage-wheels.sh" "$root"
+
+# If GHCR token is provided
+if [ -n "$ghcr_token" ]; then
+  # Login to GitHub Container Registry
+  echo "$ghcr_token" | docker login ghcr.io -u "$ghcr_user" --password-stdin
+
+  # Build image
+  docker build \
+    --build-arg "CUDA_VERSION=12.1.0" \
+    --build-arg "USE_SCCACHE=0" \
+    --build-arg "torch_cuda_arch_list=6.0 6.1" \
+    --build-arg "max_jobs=2" \
+    --build-arg "nvcc_threads=2" \
+    --file "$dockerfile" \
+    --secret "id=SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM" \
+    --tag "$docker_tag" \
+    --target "vllm-openai" \
+    "$root/$repository/$ref"
+
+  # Push image
+  docker push "$docker_tag"
+fi
