@@ -46,6 +46,15 @@ fi
   # }
 # }
 
+# Determine Dockerfile location
+# {
+  if [ -f $root/$repository/$ref/docker/Dockerfile ]; then
+    dockerfile="docker/Dockerfile"
+  else
+    dockerfile="Dockerfile"
+  fi
+# }
+
 # Build wheels
 mkdir -p "$root/tmp"
 docker build \
@@ -54,6 +63,7 @@ docker build \
   --build-arg "torch_cuda_arch_list=6.0 6.1" \
   --build-arg "max_jobs=2" \
   --build-arg "nvcc_threads=2" \
+  --file "$dockerfile" \
   --output "type=tar,dest=$root/tmp/build.tar" \
   --secret "id=SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM" \
   --tag "$docker_tag" \
