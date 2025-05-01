@@ -41,28 +41,3 @@ runs:
       with:
         name: vllm_pascal
         path: dist/*.whl
-
-#    - if: inputs.ghcr_token != ''
-#      name: Build and push
-#      uses: docker/build-push-action@v6
-#      env:
-#        DOCKER_BUILD_RECORD_UPLOAD: false
-#      with:
-#        cache-from: type=local,src=/var/tmp/buildx-cache
-#        context: ${{ inputs.repository }}/${{ inputs.ref }}
-#        provenance: false
-#        push: true
-#        tags: ${{ env.DOCKER_TAGS }}
-#        target: vllm-openai
-#
-#        build-args: |
-#          CUDA_VERSION=12.1.0
-#          USE_SCCACHE=1
-#          torch_cuda_arch_list=6.0 6.1
-#          max_jobs=2
-#          nvcc_threads=2
-#
-#        secrets: |
-#          ACTIONS_CACHE_URL=${{ env.ACTIONS_CACHE_URL }}
-#          ACTIONS_RUNTIME_TOKEN=${{ env.ACTIONS_RUNTIME_TOKEN }}
-#          SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM=${{ env.SETUPTOOLS_SCM_PRETEND_VERSION_FOR_VLLM }}
