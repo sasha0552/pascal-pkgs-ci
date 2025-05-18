@@ -1,0 +1,30 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,7 +30,7 @@ set(ignoreMe "${VLLM_PYTHON_PATH}")
+ set(PYTHON_SUPPORTED_VERSIONS "3.9" "3.10" "3.11" "3.12")
+ 
+ # Supported NVIDIA architectures.
+-set(CUDA_SUPPORTED_ARCHS "7.0;7.2;7.5;8.0;8.6;8.7;8.9;9.0;10.0;10.1;12.0")
++set(CUDA_SUPPORTED_ARCHS "6.0;6.1")
+ 
+ # Supported AMD GPU architectures.
+ set(HIP_SUPPORTED_ARCHS "gfx906;gfx908;gfx90a;gfx942;gfx950;gfx1030;gfx1100;gfx1101;gfx1200;gfx1201")
+--- a/docker/Dockerfile
++++ b/docker/Dockerfile
+@@ -242,7 +242,15 @@ RUN --mount=type=cache,target=/root/.cache/uv \
+ RUN --mount=type=bind,from=build,src=/workspace/dist,target=/vllm-workspace/dist \
+     --mount=type=cache,target=/root/.cache/uv \
+     uv pip install --system dist/*.whl --verbose \
+-    --extra-index-url https://download.pytorch.org/whl/cu$(echo $CUDA_VERSION | cut -d. -f1,2 | tr -d '.')
++    --extra-index-url https://download.pytorch.org/whl/cu$(echo $CUDA_VERSION | cut -d. -f1,2 | tr -d '.') && \
++    export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/" && \
++    python3 -m pip install transient-package && \
++    transient-package install --source triton --target triton-pascal && \
++    sed -e "s/.major < 7/.major < 6/g" \
++        -e "s/.major >= 7/.major >= 6/g" \
++        -i \
++        /usr/local/lib/python3.12/dist-packages/torch/_inductor/scheduler.py \
++        /usr/local/lib/python3.12/dist-packages/torch/utils/_triton.py
+ 
+ # If we need to build FlashInfer wheel before its release:
+ # $ export FLASHINFER_ENABLE_AOT=1
