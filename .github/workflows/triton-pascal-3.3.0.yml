@@ -1,0 +1,52 @@
+name: "[X] Build Triton (v3.3.0)"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Triton wheels
+        uses: ./.github/actions/build-triton
+        with:
+          python_version: ${{ matrix.python_version }}
+          ref: c8757738a7418249896224430ce84888e8ecdd79
+
+    strategy:
+      matrix:
+        python_version:
+          - "39"
+          - "310"
+          - "311"
+          - "312"
+          - "313"
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish wheels
+        uses: ./.github/actions/publish-wheels
+        with:
+          prefix: triton_pascal-3.3.0-
+
+  update-index:
+    needs: publish
+    secrets: inherit
+    uses: ./.github/workflows/zz-update-index.yml
+
+    permissions:
+      id-token: write
+      pages: write
+
+on:
+  workflow_dispatch:
