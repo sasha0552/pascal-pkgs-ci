@@ -12,7 +12,7 @@ jobs:
         uses: ./.github/actions/build-triton
         with:
           python_version: ${{ matrix.python_version }}
-          ref: 0e7b97bd47fc4beb21ae960a516cd9a7ae9bc060
+          ref: release/2.2.x
 
     strategy:
       matrix:

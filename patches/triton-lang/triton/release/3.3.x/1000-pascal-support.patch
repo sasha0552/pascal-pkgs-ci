@@ -1,0 +1,28 @@
+--- a/lib/Dialect/TritonGPU/Transforms/AccelerateMatmul.cpp
++++ b/lib/Dialect/TritonGPU/Transforms/AccelerateMatmul.cpp
+@@ -748,8 +748,12 @@ public:
+ 
+ static Value promoteOperand(OpBuilder &builder, Location loc, Value operand,
+                             Type promotedType) {
+-  Type tensorPromotedType = cast<RankedTensorType>(operand.getType())
+-                                .cloneWith(std::nullopt, promotedType);
++  RankedTensorType tensor = cast<RankedTensorType>(operand.getType());
++  Type tensorElementType = tensor.getElementType();
++  Type tensorPromotedType = tensor.cloneWith(std::nullopt, promotedType);
++  if (tensorElementType.isF16() && promotedType.isF32()) {
++    return builder.create<arith::ExtFOp>(loc, tensorPromotedType, operand);
++  }
+   return builder.create<FpToFpOp>(loc, tensorPromotedType, operand);
+ }
+ 
+--- a/python/triton/language/core.py
++++ b/python/triton/language/core.py
+@@ -1909,7 +1909,7 @@ def load(pointer, mask=None, other=None, boundary_check=(), padding_option="", c
+         other = semantic.to_tensor(other, _builder)
+     padding_option = _constexpr_to_value(padding_option)
+     cache_modifier = _constexpr_to_value(cache_modifier)
+-    eviction_policy = _constexpr_to_value(eviction_policy)
++    eviction_policy = _constexpr_to_value("")
+     volatile = _constexpr_to_value(volatile)
+     return semantic.load(pointer, mask, other, boundary_check, padding_option, cache_modifier, eviction_policy,
+                          volatile, _builder)
