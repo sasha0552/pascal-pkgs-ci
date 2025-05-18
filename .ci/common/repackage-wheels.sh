@@ -15,6 +15,7 @@ import packaging.utils
 import packaging.version
 import pathlib
 import shutil
+import sys
 import tempfile
 import wheel.wheelfile
 
@@ -88,6 +89,11 @@ if new_tags != "":
   new_tags = packaging.tags.parse_tag(new_tags)
 else:
   new_tags = None
+
+# If there is no changes
+if new_name is None and new_version is None and new_build_number is None and new_tags is None:
+  # Just exit
+  sys.exit()
 
 # Iterate over each .whl file in the "wheelhouse" directory
 for wheel_path in glob.glob(wheelhouse):

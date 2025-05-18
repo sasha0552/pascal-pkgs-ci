@@ -10,6 +10,8 @@ jobs:
 
       - name: Build Triton wheels
         uses: ./.github/actions/build-triton
+        env:
+          WHEEL_VERSION: "3.3.0"
         with:
           python_version: ${{ matrix.python_version }}
           ref: release/3.3.x

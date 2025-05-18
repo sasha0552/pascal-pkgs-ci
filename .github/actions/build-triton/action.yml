@@ -21,6 +21,12 @@ runs:
       shell: bash
       run: .ci/build-triton.sh "$PWD" "${{ inputs.repository }}" "${{ inputs.ref }}" "${{ inputs.python_version }}"
 
+    - name: Repackage wheels
+      shell: bash
+      run: .ci/common/repackage-wheels.sh "$PWD"
+      env:
+        WHEEL_HOUSE: "dist/*.whl"
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
