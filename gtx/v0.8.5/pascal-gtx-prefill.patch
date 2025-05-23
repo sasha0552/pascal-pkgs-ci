@@ -1,0 +1,45 @@
+diff --git a/prefix_prefill.py b/prefix_prefill.py
+index 5bbe82bb..523afc11 100644
+--- a/prefix_prefill.py
++++ b/prefix_prefill.py
+@@ -9,9 +9,14 @@ import triton.language as tl
+ 
+ from vllm.platforms import current_platform
+ 
++# Determine if we're running a consumer-grade card
++IS_GTX = "GeForce GTX" in current_platform.get_device_name()
++
+ # Static kernels parameters
+ if current_platform.get_device_capability() == (6, 0):  # P100 has 24 KB SM
+     BASE_BLOCK = 16
++elif current_platform.get_device_capability() == (6, 1) and IS_GTX:  # GTX 1070 has 24 KB SM
++    BASE_BLOCK = 16
+ elif current_platform.get_device_capability() == (6, 1):  # P40 has 48 KB SM
+     BASE_BLOCK = 32
+ elif not current_platform.has_device_capability(80):
+@@ -855,6 +860,14 @@ def context_attention_fwd(q,
+ 
+     grid = lambda META: (batch, head,
+                          triton.cdiv(max_input_len, META["BLOCK_M"]))
++
++    if IS_GTX:
++        block_m = BASE_BLOCK * 2
++        block_n = BASE_BLOCK
++    else:
++        block_m = 128
++        block_n = 64
++
+     _fwd_kernel[grid](
+         q,
+         k,
+@@ -900,8 +913,8 @@ def context_attention_fwd(q,
+         BLOCK_DMODEL_PADDED=Lk_padded,
+         SLIDING_WINDOW=sliding_window,
+         SKIP_DECODE=skip_decode,
+-        BLOCK_M=128,
+-        BLOCK_N=64,
++        BLOCK_M=block_m,
++        BLOCK_N=block_n,
+         num_unroll_cache=4,
+         num_unroll_request=1,
+         num_warps=4,
