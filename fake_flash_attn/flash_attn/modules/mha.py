@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
+from torch.utils.checkpoint import checkpoint
 from flash_attn.flash_attention import flash_attn_func
+import torch.cuda.amp
 
 class FlashAttention(nn.Module):
     def __init__(self, *args, **kwargs):
@@ -14,4 +16,5 @@ class FlashAttention(nn.Module):
         v: torch.Tensor,
         **kwargs
     ) -> torch.Tensor:
-        return flash_attn_func(q, k, v, **kwargs)
+        with torch.cuda.amp.autocast():
+            return F.scaled_dot_product_attention(q, k, v, dropout_p=kwargs.get('dropout_p', 0.0), is_causal=kwargs.get('causal', False))
