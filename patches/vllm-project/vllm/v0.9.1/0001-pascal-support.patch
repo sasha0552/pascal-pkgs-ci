@@ -1,0 +1,36 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -80,13 +80,7 @@ endif()
+ find_package(Torch REQUIRED)
+ 
+ # Supported NVIDIA architectures.
+-# This check must happen after find_package(Torch) because that's when CMAKE_CUDA_COMPILER_VERSION gets defined
+-if(DEFINED CMAKE_CUDA_COMPILER_VERSION AND
+-   CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER_EQUAL 12.8)
+-  set(CUDA_SUPPORTED_ARCHS "7.0;7.2;7.5;8.0;8.6;8.7;8.9;9.0;10.0;10.1;12.0")
+-else()
+-  set(CUDA_SUPPORTED_ARCHS "7.0;7.2;7.5;8.0;8.6;8.7;8.9;9.0")
+-endif()
++set(CUDA_SUPPORTED_ARCHS "6.0;6.1")
+ 
+ #
+ # Forward the non-CUDA device extensions to external CMake scripts.
+--- a/docker/Dockerfile
++++ b/docker/Dockerfile
+@@ -240,7 +240,15 @@ RUN --mount=type=cache,target=/root/.cache/uv \
+ RUN --mount=type=bind,from=build,src=/workspace/dist,target=/vllm-workspace/dist \
+     --mount=type=cache,target=/root/.cache/uv \
+     uv pip install --system dist/*.whl --verbose \
+-    --extra-index-url https://download.pytorch.org/whl/cu$(echo $CUDA_VERSION | cut -d. -f1,2 | tr -d '.')
++    --extra-index-url https://download.pytorch.org/whl/cu$(echo $CUDA_VERSION | cut -d. -f1,2 | tr -d '.') && \
++    export PIP_EXTRA_INDEX_URL="https://sasha0552.github.io/pascal-pkgs-ci/" && \
++    python3 -m pip install transient-package && \
++    transient-package install --source triton --target triton-pascal && \
++    sed -e "s/.major < 7/.major < 6/g" \
++        -e "s/.major >= 7/.major >= 6/g" \
++        -i \
++        /usr/local/lib/python3.12/dist-packages/torch/_inductor/scheduler.py \
++        /usr/local/lib/python3.12/dist-packages/torch/utils/_triton.py
+ 
+ # If we need to build FlashInfer wheel before its release:
+ # $ export FLASHINFER_ENABLE_AOT=1
