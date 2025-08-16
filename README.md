@@ -3,7 +3,7 @@
 The main repository for building Pascal-compatible versions of ML applications and libraries.
 
 1. vLLM `0.5.5`, `0.6.0`, `0.6.1`, `0.6.1.post1`, `0.6.1.post`, `0.6.2`, `0.6.3`, `0.6.3.post1`, `0.6.4`, `0.6.4.post1`, `0.6.5`, `0.6.6`, `0.6.6.post1`, `0.7.0`, `0.7.1`, `0.7.2`, `0.7.3`, `0.8.0`, `0.8.1`, `0.8.2`, `0.8.3`, `0.8.4`, `0.8.5`, `0.9.0`, `0.9.1`, `0.9.2`, `0.10.0` and `main` (nightly, updates daily) are available in this repository.
-2. Triton `2.2.0`, `2.3.0`, `2.3.1`, `3.0.0`, `3.1.0`, `3.2.0` are available in this repository.
+2. Triton `2.2.0`, `2.3.0`, `2.3.1`, `3.0.0`, `3.1.0`, `3.2.0`, `3.3.0`, `3.3.1`, `3.4.0` are available in this repository.
 
 > [!IMPORTANT]
 > **WARNING:** Support for new GPUs has been disabled (`v0.7.0`+/`main`)
