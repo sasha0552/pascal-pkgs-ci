@@ -1,4 +1,4 @@
-name: "[X] Build Triton (v3.3.0)"
+name: "[X] Build Triton (v3.3.1)"
 
 jobs:
   build:
@@ -10,11 +10,9 @@ jobs:
 
       - name: Build Triton wheels
         uses: ./.github/actions/build-triton
-        env:
-          WHEEL_VERSION: "3.3.0"
         with:
           python_version: ${{ matrix.python_version }}
-          ref: v3.3.0
+          ref: v3.3.1
 
     strategy:
       matrix:
@@ -39,7 +37,7 @@ jobs:
       - name: Publish wheels
         uses: ./.github/actions/publish-wheels
         with:
-          prefix: triton_pascal-3.3.0-
+          prefix: triton_pascal-3.3.1-
 
   update-index:
     needs: publish
