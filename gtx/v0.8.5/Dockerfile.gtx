@@ -1,0 +1,8 @@
+FROM ghcr.io/sasha0552/vllm:v0.8.5
+
+# patch for gtx 1070 compat with 48k shared_memory and compute capacity 6,1
+WORKDIR /vllm-workspace
+COPY pascal-gtx-prefill.patch .
+RUN cd /usr/local/lib/python3.12/dist-packages/vllm/attention/ops && \
+  git apply /vllm-workspace/pascal-gtx-prefill.patch && \
+  rm /vllm-workspace/pascal-gtx-prefill.patch
